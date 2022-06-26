@@ -1,4 +1,5 @@
-# Chess_Logic
+# Chess_Logic (Work in Progress)
+
  An attempt to build the logical moves of all the chess pieces usng cartesian coordinates to represent the board
  
  The board is labelled like an 8x8 grid on the cartesian plane, starting at (0,0), with Square a1 being (0,0), and square h8 being (7,7).
