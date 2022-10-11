@@ -53,6 +53,10 @@ Board = {"a1":[0,0,"WQR"],"b1":[1,0,"WQN"],"c1":[2,0,"WQB"],"d1":[3,0,"WQ"],"e1"
          
          }
 
+squares = {"a1":(0,0),"b1":(1,0),"c1":(2,0),"d1":(3,0),"e1":(4,0),"f1":(5,0),"g1":(6,0),"h1":(7,0),"a2":(0,1),"b2":(1,1),"c2":(2,1),"d2":(3,1),"e2":(4,1),"f2":(5,1),"g2":(6,1),"h2":(7,1),"a3":(0,2),"b3":(1,2),"c3":(2,2),"d3":(3,2),"e3":(4,2),"f3":(5,2),"g3":(6,2),"h3":(7,2),"a4":(0,3),"b4":(1,3),"c4":(2,3),"d4":(3,3),"e4":(4,3),"f4":(5,3),"g4":(6,3),"h4":(7,3),"a5":(0,4),"b5":(1,4),"c5":(2,4),"d5":(3,4),"e5":(4,4),"f5":(5,4),"g5":(6,4),"h5":(7,4),"a6":(0,5),"b6":(1,5),"c6":(2,5),"d6":(3,5),"e6":(4,5),"F6":(5,5),"g6":(6,5),"h6":(7,5),"a7":(0,6),"b7":(1,6),"c7":(2,6),"d7":(3,6),"e7":(4,6),"f7":(5,6),"g7":(6,6),"h7":(7,6),"a8":(0,7),"b8":(1,7),"C8":(2,7),"d8":(3,7),"e8":(4,7),"f8":(5,7),"g8":(6,7),"h8":(7,7)}
+
+threatened_squares = {}
+
 board_letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
 
 def render_board(Board):
@@ -120,6 +124,7 @@ def move_validity_knight(knight_move):
     returns True if move is valid and false otherwise
     
     """
+    knight_threatened_squares = []
     x_coord = 0
     y_coord = 0
     for key, value in Board.items():
@@ -127,6 +132,24 @@ def move_validity_knight(knight_move):
             x_coord = Board[knight_move[2]][0]
             y_coord = Board[knight_move[2]][1]
             print(value[2])
+            
+            if knight_move[1] in squares:
+                for square_key, values in squares.items():
+                    num = (values[0]-squares[knight_move[1]][0])
+                    div = (values[1]-squares[knight_move[1]][1])
+                    if(div != 0 and (num >= -2 and num <=2) and (div >= -2 and div <=2)): #ensures the denominator is not zero. to avoid ZeroDivisionError
+                        check = num/div
+                        if(check == 0.5 or check == -0.5 or check == 2 or check == -2): #Checks to see all the valid possible positions the knight can move to
+                            if(square_key not in threatened_squares):
+                                if(Board[square_key][2] != ""):#Checks if the square is not empty
+                                    if(Board[square_key][2][0] != knight_move[0][0]):#Checks if the color of the piece occupying the square is the same as the piece that is attacking it.
+                                        knight_threatened_squares.append(square_key) #Appends all the possible squares to the threatened square list.
+                                else:
+                                    knight_threatened_squares.append(square_key)  # Appends all the possible squares to the threatened square list.
+            knight_threatened_squares.append(knight_move[2])
+            threatened_squares[knight_move[0]] = knight_threatened_squares
+            print(threatened_squares)
+            
             if((((x_coord - value[0])/(y_coord - value[1])) == -0.5 or (((x_coord - value[0])/(y_coord - value[1])) == -2) or ((x_coord - value[0])/(y_coord - value[1])) == 2 or ((x_coord - value[0])/(y_coord - value[1])) == 0.5) and (value[2] == "" or value[2][0]!=knight_move[0][0])):
                 return True
             
@@ -142,11 +165,28 @@ def move_validity_Rook(move):
     
     x_coord = 0
     y_coord = 0
+    rook_threatened_squares = []
     for key, value in Board.items():
         if key == move[1]:
             x_coord = Board[move[2]][0]
             y_coord = Board[move[2]][1]
-            
+
+            if move[1] in squares:
+                for square_key, values in squares.items():
+                    num = (values[0]-squares[move[1]][0])
+                    div = (values[1]-squares[move[1]][1])
+                    if(num == 0 or div == 0): #Checks to see all the valid possible positions the rook can move to
+                        if(square_key not in threatened_squares):
+                            if (Board[square_key][2] != ""):#Checks if the square is not empty
+                                if (Board[square_key][2][0] != move[0][0]):#Checks if the color of the piece occupying the square is the same as the piece that is attacking it.
+                                    rook_threatened_squares.append(
+                                        square_key)  # Appends all the possible squares to the threatened square list.
+                            else:
+                                rook_threatened_squares.append(square_key)  # Appends all the possible squares to the threatened square list.
+
+            rook_threatened_squares.append(move[2])
+            threatened_squares[move[0]] = rook_threatened_squares
+            print(threatened_squares)
             
             if(((x_coord - value[0]) == 0 or (y_coord - value[1]) == 0) and (value[2] == "" or value[2][0]!= move[0][0])):
                 if((x_coord - value[0] == 0)):
@@ -190,11 +230,31 @@ def move_validity_Bishop(move):
     """
     x_coord = 0
     y_coord = 0
+    bishop_threatened_squares = []
     for key, value in Board.items():
         if key == move[1]:
             x_coord = Board[move[2]][0]
             y_coord = Board[move[2]][1]
-            
+
+            if move[1] in squares:
+                for square_key, values in squares.items():
+                    num = (values[0]-squares[move[1]][0])
+                    div = (values[1]-squares[move[1]][1])
+                    if(div != 0): #ensures the denominator is not zero. to avoid ZeroDivisionError
+                        check = num/div
+                        if(check == 1 or check == -1): #Checks to see all the valid possible positions the bishop can move to
+                            if(square_key not in threatened_squares):
+                                if (Board[square_key][2] != ""):#Checks if the square is not empty
+                                    if (Board[square_key][2][0] != move[0][0]):#Checks if the color of the piece occupying the square is the same as the piece that is attacking it.
+                                        bishop_threatened_squares.append(
+                                            square_key)  # Appends all the possible squares to the threatened square list.
+                                else:
+                                    bishop_threatened_squares.append(square_key)  # Appends all the possible squares to the threatened square list.
+
+            bishop_threatened_squares.append(move[2])
+            threatened_squares[move[0]] = bishop_threatened_squares
+            print(threatened_squares)
+
             if((((x_coord - value[0])/(y_coord - value[1])) == -1 or ((x_coord - value[0])/(y_coord - value[1])) == 1) and (value[2] == "" or value[2][0]!= move[0][0])):
                 if(((x_coord - value[0])/(y_coord - value[1])) == 1):
                     while(y_coord < int(move[1][1]) - 1):
@@ -221,6 +281,32 @@ def move_validity_Bishop(move):
                 return True
             
 def move_validity_Queen(move):
+    queen_threatened_squares = []
+    if move[1] in squares:
+        for square_key, values in squares.items():
+            num = (values[0] - squares[move[1]][0])
+            div = (values[1] - squares[move[1]][1])
+            if (num == 0 or div == 0):  # Checks to see all the valid possible positions the queen(Horizontal and vertical moves) can move to
+                if (square_key not in threatened_squares):
+                    if (Board[square_key][2] != ""):
+                        if (Board[square_key][2][0] != move[0][0]):
+                            queen_threatened_squares.append(square_key)  # Appends all the possible squares to the threatened square list.
+                    else:
+                        queen_threatened_squares.append(square_key)  # Appends all the possible squares to the threatened square list.
+            if (div != 0):  # ensures the denominator is not zero. to avoid ZeroDivisionError
+                check = num / div
+                if (check == 1 or check == -1):  # Checks to see all the valid possible positions the Queen(diagonal) can move to
+                    if (square_key not in threatened_squares):
+                        if (Board[square_key][2] != ""): #Checks if the square is not empty
+                            if (Board[square_key][2][0] != move[0][0]): #Checks if the color of the piece occupying the square is the same as the piece that is attacking it.
+                                queen_threatened_squares.append(
+                                    square_key)  # Appends all the possible squares to the threatened square list.
+                        else:
+                            queen_threatened_squares.append(square_key)  # Appends all the possible squares to the threatened square list.
+    queen_threatened_squares.append(move[2])
+    threatened_squares[move[0]] = queen_threatened_squares
+    print(threatened_squares)
+
     if(move_validity_Bishop(move) == True or move_validity_Rook(move) == True):
         return True
     else:
@@ -234,11 +320,11 @@ def move_validity_pawn(move):
     """
     x_coord = 0
     y_coord = 0
-    
     for key, value in Board.items():
         if key == move[1]:
             x_coord = Board[move[2]][0]
             y_coord = Board[move[2]][1]
+
             if(int(move[2][1]) == 7 or int(move[2][1]) == 2): #Check that the pawn is yet to move
                 if(((y_coord - value[1]) == 1 or (y_coord - value[1]) == 2 or (y_coord - value[1]) == -1 or (y_coord - value[1]) == -2) and  (x_coord - value[0]) == 0):#validates basic pawn move
                     return True
@@ -276,7 +362,7 @@ def make_move(validCheck, move):
         return "Illegal Move"
 
 def get_position_of_piece(move):
-    """ This fucntion gets the position of the piece the user has indicated to move. If the piece does not exist on the board, it returns an empty string"""
+    """ This function gets the position of the piece the user has indicated to move. If the piece does not exist on the board, it returns an empty string"""
     for key, values in Board.items():
         if move[0] in values:
             return key
