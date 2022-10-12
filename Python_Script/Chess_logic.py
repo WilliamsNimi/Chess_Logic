@@ -326,14 +326,22 @@ def move_validity_pawn(move):
             x_coord = Board[move[2]][0]
             y_coord = Board[move[2]][1]
 
-            if(move[0][0] == "W"):
+            if(move[0][0] == "W"):#Checks if it is a white pawn moving
                 for square_key, values in squares.items():
                     if((values[0] == (value[0]+1) and values[1] == (value[1]+1)) or (values[0] == (value[0] - 1) and values[1] == (value[1]+1))):
-                        pawn_threatened_squares.append(square_key)
-            elif(move[0][0] == "B"):
+                        if (Board[square_key][2] != ""):#Checks if the square is not empty
+                            if (Board[square_key][2][0] != move[0][0]):#Checks if the color of the piece occupying the square is the same as the piece that is attacking it.
+                                pawn_threatened_squares.append(square_key)
+                        else:
+                            pawn_threatened_squares.append(square_key)
+            elif(move[0][0] == "B"):#checks if it is a black pawn moving
                 for square_key, values in squares.items():
                     if((values[0] == (value[0]+1) and values[1] == (value[1]-1)) or (values[0] == (value[0] - 1) and values[1] == (value[1]-1))):
-                        pawn_threatened_squares.append(square_key)
+                        if (Board[square_key][2] != ""):#Checks if the square is not empty
+                            if (Board[square_key][2][0] != move[0][0]):#Checks if the color of the piece occupying the square is the same as the piece that is attacking it.
+                                pawn_threatened_squares.append(square_key)
+                        else:
+                            pawn_threatened_squares.append(square_key)
 
             threatened_squares[move[0]] = pawn_threatened_squares
             print(threatened_squares)
@@ -350,10 +358,26 @@ def move_validity_king(move):
     """This function calculates the validity of a King move and returns a boolean value. The king can only move 1 step in any direction. Thus, the difference between the current position and new position cannot be greater than 1 or -1. i.e. y2 -y1 not greater than 1 or -1. x2 - x1 not greater than 1 or -1"""
     x_coord = 0
     y_coord = 0
+    king_threatened_squares = []
+
+
     for key, value in Board.items():
         if key == move[1]:
             x_coord = Board[move[2]][0]
             y_coord = Board[move[2]][1]
+
+            for square_key, values in squares.items():
+                if (((values[0] - value[0] == 0) and (values[1] - value[1] == 1)) or ((values[0] - value[0] == 1) and (values[1] - value[1] == 0)) or ((values[0] - value[0] == -1) and (values[1] - value[1] == 0)) or ((values[0] - value[0] == 0) and (values[1] - value[1] == -1))or((values[0] - value[0] == 1) and (values[1] - value[1] == 1)) or((values[0] - value[0] == -1) and (values[1] - value[1] == 1))or((values[0] - value[0] == 1) and (values[1] - value[1] == -1))or((values[0] - value[0] == -1) and (values[1] - value[1] == -1))):
+                    if (Board[square_key][2] != ""):#Checks if the square is not empty
+                        if (Board[square_key][2][0] != move[0][0]):#Checks if the color of the piece occupying the square is the same as the piece that is attacking it.
+                            king_threatened_squares.append(square_key)
+                    else:
+                        king_threatened_squares.append(square_key)
+
+            king_threatened_squares.append(move[2])
+            threatened_squares[move[0]] = king_threatened_squares
+            print(threatened_squares)
+
             if(value[2] != ""):
                 return False
             if(((y_coord - value[1]) == 1 and (x_coord - value[0]) == 0) or ((y_coord - value[1]) == -1 and (x_coord - value[0]) == 0) or ((x_coord - value[0]) == 1 and (y_coord - value[1]) == 0) or ((x_coord -  value[0]) == -1 and (x_coord - value[1]) == 0) or ((x_coord - value[0]) == 1 and (y_coord - value[1]) == 1) or ((x_coord - value[0]) == -1 and (y_coord - value[1]) == -1)):
