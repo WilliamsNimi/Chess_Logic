@@ -2,13 +2,13 @@
 """
 Created on Sun Apr 17 06:21:01 2022
 
-@author: BRINQ AFRICA
+@author: Nimi Williams
 """
 import numpy as np
 import pandas as pd
 
 
-"""Board Initialozation
+"""Board Initialization
 
 
 WQR = White's Queen Side Rook
@@ -108,12 +108,6 @@ def render_board(Board):
     df = pd.DataFrame(board_array, columns = board_letters)
     df.index = [8,7,6,5,4,3,2,1]
     print(df)
-    
-    
-    
-    
-    
-    
     
 
 def move_validity_knight(knight_move):
