@@ -320,10 +320,23 @@ def move_validity_pawn(move):
     """
     x_coord = 0
     y_coord = 0
+    pawn_threatened_squares = []
     for key, value in Board.items():
         if key == move[1]:
             x_coord = Board[move[2]][0]
             y_coord = Board[move[2]][1]
+
+            if(move[0][0] == "W"):
+                for square_key, values in squares.items():
+                    if((values[0] == (value[0]+1) and values[1] == (value[1]+1)) or (values[0] == (value[0] - 1) and values[1] == (value[1]+1))):
+                        pawn_threatened_squares.append(square_key)
+            elif(move[0][0] == "B"):
+                for square_key, values in squares.items():
+                    if((values[0] == (value[0]+1) and values[1] == (value[1]-1)) or (values[0] == (value[0] - 1) and values[1] == (value[1]-1))):
+                        pawn_threatened_squares.append(square_key)
+
+            threatened_squares[move[0]] = pawn_threatened_squares
+            print(threatened_squares)
 
             if(int(move[2][1]) == 7 or int(move[2][1]) == 2): #Check that the pawn is yet to move
                 if(((y_coord - value[1]) == 1 or (y_coord - value[1]) == 2 or (y_coord - value[1]) == -1 or (y_coord - value[1]) == -2) and  (x_coord - value[0]) == 0):#validates basic pawn move
