@@ -374,7 +374,7 @@ def move_validity_king(move):
 
             if(value[2] != ""):
                 return False
-            if(((y_coord - value[1]) == 1 and (x_coord - value[0]) == 0) or ((y_coord - value[1]) == -1 and (x_coord - value[0]) == 0) or ((x_coord - value[0]) == 1 and (y_coord - value[1]) == 0) or ((x_coord -  value[0]) == 1 and (y_coord - value[1]) == -1) or ((x_coord - value[0]) == 1 and (y_coord - value[1]) == 1) or ((x_coord - value[0]) == -1 and (y_coord - value[1]) == -1)):
+            if(((y_coord - value[1]) == 1 and (x_coord - value[0]) == 0) or ((y_coord - value[1]) == -1 and (x_coord - value[0]) == 0) or ((x_coord - value[0]) == 1 and (y_coord - value[1]) == 0) or ((x_coord -  value[0]) == 1 and (y_coord - value[1]) == -1) or ((x_coord - value[0]) == -1 and (y_coord - value[1]) == -1) or ((x_coord - value[0]) == -1 and (y_coord - value[1]) == 0) or ((x_coord - value[0]) == -1 and (y_coord - value[1]) == 1) or ((x_coord - value[0]) == 1 and (y_coord - value[1]) == 1)):
                 return True      
 
 
