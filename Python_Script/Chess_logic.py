@@ -54,6 +54,7 @@ Board = {"a1":[0,0,"WQR"],"b1":[1,0,"WQN"],"c1":[2,0,"WQB"],"d1":[3,0,"WQ"],"e1"
          }
 
 squares = {"a1":(0,0),"b1":(1,0),"c1":(2,0),"d1":(3,0),"e1":(4,0),"f1":(5,0),"g1":(6,0),"h1":(7,0),"a2":(0,1),"b2":(1,1),"c2":(2,1),"d2":(3,1),"e2":(4,1),"f2":(5,1),"g2":(6,1),"h2":(7,1),"a3":(0,2),"b3":(1,2),"c3":(2,2),"d3":(3,2),"e3":(4,2),"f3":(5,2),"g3":(6,2),"h3":(7,2),"a4":(0,3),"b4":(1,3),"c4":(2,3),"d4":(3,3),"e4":(4,3),"f4":(5,3),"g4":(6,3),"h4":(7,3),"a5":(0,4),"b5":(1,4),"c5":(2,4),"d5":(3,4),"e5":(4,4),"f5":(5,4),"g5":(6,4),"h5":(7,4),"a6":(0,5),"b6":(1,5),"c6":(2,5),"d6":(3,5),"e6":(4,5),"F6":(5,5),"g6":(6,5),"h6":(7,5),"a7":(0,6),"b7":(1,6),"c7":(2,6),"d7":(3,6),"e7":(4,6),"f7":(5,6),"g7":(6,6),"h7":(7,6),"a8":(0,7),"b8":(1,7),"c8":(2,7),"d8":(3,7),"e8":(4,7),"f8":(5,7),"g8":(6,7),"h8":(7,7)}
+inverted_squares_map = {'0,0': 'a1', '1,0': 'b1', '2,0': 'c1', '3,0': 'd1', '4,0': 'e1', '5,0': 'f1', '6,0': 'g1', '7,0': 'h1', '0,1': 'a2', '1,1': 'b2', '2,1': 'c2', '3,1': 'd2', '4,1': 'e2', '5,1': 'f2', '6,1': 'g2', '7,1': 'h2', '0,2': 'a3', '1,2': 'b3', '2,2': 'c3', '3,2': 'd3', '4,2': 'e3', '5,2': 'f3', '6,2': 'g3', '7,2': 'h3', '0,3': 'a4', '1,3': 'b4', '2,3': 'c4', '3,3': 'd4', '4,3': 'e4', '5,3': 'f4', '6,3': 'g4', '7,3': 'h4', '0,4': 'a5', '1,4': 'b5', '2,4': 'c5', '3,4': 'd5', '4,4': 'e5', '5,4': 'f5', '6,4': 'g5', '7,4': 'h5', '0,5': 'a6', '1,5': 'b6', '2,5': 'c6', '3,5': 'd6', '4,5': 'e6', '5,5': 'F6', '6,5': 'g6', '7,5': 'h6', '0,6': 'a7', '1,6': 'b7', '2,6': 'c7', '3,6': 'd7', '4,6': 'e7', '5,6': 'f7', '6,6': 'g7', '7,6': 'h7', '0,7': 'a8', '1,7': 'b8', '2,7': 'c8', '3,7': 'd8', '4,7': 'e8', '5,7': 'f8', '6,7': 'g8', '7,7': 'h8'}
 
 threatened_squares = {}
 
@@ -108,7 +109,35 @@ def render_board(Board):
     df = pd.DataFrame(board_array, columns = board_letters)
     df.index = [8,7,6,5,4,3,2,1]
     print(df)
-    
+
+def isValidBoardCoordinates(x_coord, y_coord):
+    VALID_X_COORD = x_coord>=0 and x_coord<=7
+    VALID_Y_COORD = y_coord>=0 and y_coord<=7
+    return VALID_X_COORD and VALID_Y_COORD
+
+def pawn_threatened_squares(current_position, current_board):
+    pawn_threats = []
+    x_coord = squares[current_position][0]
+    y_coord = squares[current_position][1]
+    top_right_square_is_valid = isValidBoardCoordinates(x_coord+1, y_coord+1)
+    top_left_square_is_valid = isValidBoardCoordinates(x_coord-1, y_coord+1)
+    right_target_position = inverted_squares_map[str(x_coord+1)+','+str(y_coord+1)]
+    left_target_position = inverted_squares_map[str(x_coord-1)+','+str(y_coord+1)]
+    right_target_piece = current_board[right_target_position][2]
+    left_target_piece = current_board[left_target_position][2]
+    color = current_board[current_position][2][0]
+
+    #Check if the top right square is valid, empty or of a different color
+    if(top_right_square_is_valid and len(right_target_piece)==0):
+        pawn_threats.append(right_target_position)
+    if(top_right_square_is_valid and len(right_target_piece)>=1 and right_target_piece[0]!=color):
+        pawn_threats.append(right_target_position)
+    #Check if the top left square is valid, empty or of a different color
+    if(top_left_square_is_valid and len(left_target_piece)==0):
+        pawn_threats.append(left_target_position)
+    if(top_left_square_is_valid and len(left_target_piece)>=1 and left_target_piece[0]!=color):
+        pawn_threats.append(left_target_position)
+    return pawn_threats
 
 def move_validity_knight(knight_move):
     """
