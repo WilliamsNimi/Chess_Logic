@@ -138,7 +138,7 @@ def pawn_threatened_squares(current_position, current_board):
         pawn_threats.append(left_target_position)
     if(top_left_square_is_valid and len(left_target_piece)>=1 and left_target_piece[0]!=color):
         pawn_threats.append(left_target_position)
-    return pawn_threats
+    return {color: pawn_threats}
 
 def knight_threatened_squares(current_position, current_board):
     """
@@ -222,12 +222,13 @@ def knight_threatened_squares(current_position, current_board):
     if(bottom_far_left_square_is_valid and len(bottom_far_left_target_piece)>=1 and bottom_far_left_target_piece[0]!=color):
         knight_threats.append(bottom_far_left_target_position)
     
-    return knight_threats
+    return {color: knight_threats}
 
 def rook_threatened_squares(current_position, current_board):
     """
     A rook can potentially attack in 4 vertical directions (+x, -x, +y, -y).
     We'll check each of these directions for validity and occupation
+    Returns a dictionary with key attacking color and value as a list of threatened squares
     """
     rook_threats = []
     x_coord = squares[current_position][0]
@@ -289,7 +290,7 @@ def rook_threatened_squares(current_position, current_board):
         if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
             rook_threats.append(target_position)
             break
-    return rook_threats
+    return {color: rook_threats}
 
 def bishop_threatened_squares(current_position, current_board):
     """
@@ -357,7 +358,20 @@ def bishop_threatened_squares(current_position, current_board):
         if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
             bishop_threats.append(target_position)
             break
-    return bishop_threats
+    return {color: bishop_threats}
+
+def queen_threatened_squares(current_position, current_board):
+    
+    """
+    A Queen combines the moves of both the Bishop and Rook.
+    We'll simply call the existing functions and combine their results
+    """
+
+    color = current_board[current_position][2][0]
+    bishop_threats = bishop_threatened_squares(current_position, current_board)
+    rook_threats = rook_threatened_squares(current_position, current_board)
+    return {color: bishop_threats[color] + rook_threats[color]}
+
 
 def move_validity_knight(knight_move):
     """
