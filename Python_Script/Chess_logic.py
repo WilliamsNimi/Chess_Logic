@@ -289,6 +289,7 @@ def rook_threatened_squares(current_position, current_board):
         if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
             rook_threats.append(target_position)
             break
+    return rook_threats
 
 def move_validity_knight(knight_move):
     """
