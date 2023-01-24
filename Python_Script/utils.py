@@ -338,25 +338,38 @@ def king_threatened_squares(current_position, current_board):
     x_coord = squares[current_position][0]
     y_coord = squares[current_position][1]
     color = current_board[current_position][2][0]
+    top_90_degrees_y_coord = normalized_arithmetic(color, "sum", y_coord, 1)
+    top_45_degrees_left_x_coord = normalized_arithmetic(color, "sum", x_coord, 1)
+    top_45_degrees_left_y_coord = normalized_arithmetic(color, "sum", y_coord, 1)
+    right_90_degrees_x_coord = normalized_arithmetic(color, "sum", x_coord, 1)
+    bottom_45_degrees_right_x_coord = normalized_arithmetic(color, "sum", x_coord, 1)
+    bottom_45_degrees_right_y_coord = normalized_arithmetic(color, "diff", y_coord, 1)
+    bottom_90_degrees_y_coord = normalized_arithmetic(color, "diff", y_coord, 1)
+    bottom_45_degrees_left_x_coord = normalized_arithmetic(color, "diff", x_coord, 1)
+    bottom_45_degrees_left_y_coord = normalized_arithmetic(color, "diff", y_coord, 1)
+    left_90_degrees_x_coord = normalized_arithmetic(color, "diff", x_coord, 1)
+    top_45_degrees_x_coord = normalized_arithmetic(color, "diff", x_coord, 1)
+    top_45_degrees_y_coord = normalized_arithmetic(color, "sum", y_coord, 1)
+
     #Check if potential target squares are present on the board
-    top_90_degrees_is_valid = isValidBoardCoordinates(x_coord, y_coord+1)
-    top_45_degrees_right_is_valid = isValidBoardCoordinates(x_coord+1, y_coord+1)
-    right_90_degrees_is_valid = isValidBoardCoordinates(x_coord+1, y_coord)
-    bottom_45_degrees_right_is_valid = isValidBoardCoordinates(x_coord+1, y_coord-1)
-    bottom_90_degrees_is_valid = isValidBoardCoordinates(x_coord, y_coord-1)
-    bottom_45_degrees_left_is_valid = isValidBoardCoordinates(x_coord-1, y_coord-1)
-    left_90_degrees_is_valid = isValidBoardCoordinates(x_coord-1, y_coord)
-    top_45_degrees_left_is_valid = isValidBoardCoordinates(x_coord-1, y_coord+1)
+    top_90_degrees_is_valid = isValidBoardCoordinates(x_coord, top_90_degrees_y_coord)
+    top_45_degrees_right_is_valid = isValidBoardCoordinates(top_45_degrees_left_x_coord, top_45_degrees_left_y_coord)
+    right_90_degrees_is_valid = isValidBoardCoordinates(right_90_degrees_x_coord, y_coord)
+    bottom_45_degrees_right_is_valid = isValidBoardCoordinates(bottom_45_degrees_right_x_coord, bottom_45_degrees_right_y_coord)
+    bottom_90_degrees_is_valid = isValidBoardCoordinates(x_coord, bottom_90_degrees_y_coord)
+    bottom_45_degrees_left_is_valid = isValidBoardCoordinates(bottom_45_degrees_left_x_coord, bottom_45_degrees_left_y_coord)
+    left_90_degrees_is_valid = isValidBoardCoordinates(left_90_degrees_x_coord, y_coord)
+    top_45_degrees_left_is_valid = isValidBoardCoordinates(top_45_degrees_x_coord, top_45_degrees_y_coord)
 
     #map potential target square coordinates to a board position in standard chess notation
-    top_90_degrees_target_position = inverted_squares_map[str(x_coord)+','+str(y_coord+1)] if top_90_degrees_is_valid else 'invalid_square'
-    top_45_degrees_right_target_position = inverted_squares_map[str(x_coord+1)+','+str(y_coord+1)] if top_45_degrees_right_is_valid else 'invalid_square'
-    right_90_degrees_target_position = inverted_squares_map[str(x_coord+1)+','+str(y_coord)] if right_90_degrees_is_valid else 'invalid_square'
-    bottom_45_degrees_right_target_position = inverted_squares_map[str(x_coord+1)+','+str(y_coord-1)] if bottom_45_degrees_right_is_valid else 'invalid_square'
-    bottom_90_degrees_target_position = inverted_squares_map[str(x_coord)+','+str(y_coord-1)] if bottom_90_degrees_is_valid else 'invalid_square'
-    bottom_45_degrees_left_target_position = inverted_squares_map[str(x_coord-1)+','+str(y_coord-1)] if bottom_45_degrees_left_is_valid else 'invalid_square'
-    left_90_degrees_target_position = inverted_squares_map[str(x_coord-1)+','+str(y_coord)] if left_90_degrees_is_valid else 'invalid_square'
-    top_45_degrees_left_target_position = inverted_squares_map[str(x_coord-1)+','+str(y_coord+1)] if top_45_degrees_left_is_valid else 'invalid_square'
+    top_90_degrees_target_position = inverted_squares_map[str(x_coord)+','+str(top_90_degrees_y_coord)] if top_90_degrees_is_valid else 'invalid_square'
+    top_45_degrees_right_target_position = inverted_squares_map[str(top_45_degrees_left_x_coord)+','+str(top_45_degrees_left_y_coord)] if top_45_degrees_right_is_valid else 'invalid_square'
+    right_90_degrees_target_position = inverted_squares_map[str(right_90_degrees_x_coord)+','+str(y_coord)] if right_90_degrees_is_valid else 'invalid_square'
+    bottom_45_degrees_right_target_position = inverted_squares_map[str(bottom_45_degrees_right_x_coord)+','+str(bottom_45_degrees_right_y_coord)] if bottom_45_degrees_right_is_valid else 'invalid_square'
+    bottom_90_degrees_target_position = inverted_squares_map[str(x_coord)+','+str(bottom_90_degrees_y_coord)] if bottom_90_degrees_is_valid else 'invalid_square'
+    bottom_45_degrees_left_target_position = inverted_squares_map[str(bottom_45_degrees_left_x_coord)+','+str(bottom_45_degrees_left_y_coord)] if bottom_45_degrees_left_is_valid else 'invalid_square'
+    left_90_degrees_target_position = inverted_squares_map[str(left_90_degrees_x_coord)+','+str(y_coord)] if left_90_degrees_is_valid else 'invalid_square'
+    top_45_degrees_left_target_position = inverted_squares_map[str(top_45_degrees_x_coord)+','+str(top_45_degrees_y_coord)] if top_45_degrees_left_is_valid else 'invalid_square'
 
     #check which piece if any is occupying the potential target squares
     top_90_degrees_target_piece = current_board[top_90_degrees_target_position][2] if top_90_degrees_is_valid else 'invalid_piece'
@@ -379,7 +392,7 @@ def king_threatened_squares(current_position, current_board):
         king_threats.append(top_45_degrees_right_target_position)
 
     if(right_90_degrees_is_valid and len(right_90_degrees_target_piece)==0):
-        king_threats.append(top_90_degrees_target_position)
+        king_threats.append(right_90_degrees_target_position)
     if(right_90_degrees_is_valid and len(right_90_degrees_target_piece)>=1 and right_90_degrees_target_piece[0]!=color):
         king_threats.append(right_90_degrees_target_position)
 
@@ -399,7 +412,7 @@ def king_threatened_squares(current_position, current_board):
         king_threats.append(bottom_45_degrees_left_target_position)
 
     if(left_90_degrees_is_valid and len(left_90_degrees_target_piece)==0):
-        king_threats.append(bottom_90_degrees_target_position)
+        king_threats.append(left_90_degrees_target_position)
     if(left_90_degrees_is_valid and len(left_90_degrees_target_piece)>=1 and left_90_degrees_target_piece[0]!=color):
         king_threats.append(left_90_degrees_target_position)
 
@@ -477,10 +490,10 @@ sampleBoard = {"a1":[0,0,""],"b1":[1,0,"WQN"],"c1":[2,0,""],"d1":[3,0,""],"e1":[
 # print(rook_threatened_squares('g5', sampleBoard)) #['f5', 'e5', 'd5', 'c5', 'b5', 'a5', 'h5', 'g4', 'g6']
 # print(bishop_threatened_squares('e6', sampleBoard)) #['f7', 'f5', 'd7', 'd5']
 # print(bishop_threatened_squares('d5', sampleBoard)) #['c4', 'c6', 'e4', 'e6']
-print(queen_threatened_squares('g4', sampleBoard)) #['h5', 'h3', 'f5', 'h4', 'f4', 'g5', 'g3']
-print(queen_threatened_squares('b5', sampleBoard)) #['a4', 'a6', 'c4', 'a5', 'c5', 'b4', 'b3', 'b2', 'b6']
+# print(queen_threatened_squares('g4', sampleBoard)) #['h5', 'h3', 'f5', 'h4', 'f4', 'g5', 'g3']
+# print(queen_threatened_squares('b5', sampleBoard)) #['a4', 'a6', 'c4', 'a5', 'c5', 'b4', 'b3', 'b2', 'b6']
 # print(king_threatened_squares('e4', sampleBoard)) #['e5', 'f5', 'e5', 'f3', 'e3', 'd3', 'e3', 'd5']
 # print(king_threatened_squares('c6', sampleBoard)) #['e5', 'f5', 'e5', 'f3', 'e3', 'd3', 'e3', 'd5']
 # print(extract_piece_name_and_color("Bk"))
 
-#print(all_threatened_squares(sampleBoardWhite))
+# print(all_threatened_squares(sampleBoard))
