@@ -165,8 +165,9 @@ def rook_threatened_squares(current_position, current_board):
 
     #+x direction
     for dx_up in range(1,8):
-        next_square_is_valid = isValidBoardCoordinates(x_coord+dx_up, y_coord)
-        target_position = inverted_squares_map[str(x_coord+dx_up)+','+str(y_coord)] if next_square_is_valid else 'invalid_square'
+        x_coord_up = normalized_arithmetic(color, "sum", x_coord, dx_up)
+        next_square_is_valid = isValidBoardCoordinates(x_coord_up, y_coord)
+        target_position = inverted_squares_map[str(x_coord_up)+','+str(y_coord)] if next_square_is_valid else 'invalid_square'
         target_piece = current_board[target_position][2] if next_square_is_valid else 'invalid_piece'
         if(not next_square_is_valid):
             break
@@ -181,8 +182,9 @@ def rook_threatened_squares(current_position, current_board):
     
     #-x direction
     for dx_down in range(1,8):
-        next_square_is_valid = isValidBoardCoordinates(x_coord - dx_down, y_coord)
-        target_position = inverted_squares_map[str(x_coord - dx_down)+','+str(y_coord)] if next_square_is_valid else 'invalid_square'
+        x_coord_down = normalized_arithmetic(color, "diff", x_coord, dx_down)
+        next_square_is_valid = isValidBoardCoordinates(x_coord_down, y_coord)
+        target_position = inverted_squares_map[str(x_coord_down)+','+str(y_coord)] if next_square_is_valid else 'invalid_square'
         target_piece = current_board[target_position][2] if next_square_is_valid else 'invalid_piece'
         if(not next_square_is_valid):
             break
@@ -197,8 +199,9 @@ def rook_threatened_squares(current_position, current_board):
 
     #+y direction
     for dy_up in range(1,8):
-        next_square_is_valid = isValidBoardCoordinates(x_coord, y_coord + dy_up)
-        target_position = inverted_squares_map[str(x_coord)+','+str(y_coord + dy_up)] if next_square_is_valid else 'invalid_square'
+        y_coord_up = normalized_arithmetic(color, "sum", y_coord, dy_up)
+        next_square_is_valid = isValidBoardCoordinates(x_coord, y_coord_up)
+        target_position = inverted_squares_map[str(x_coord)+','+str(y_coord_up)] if next_square_is_valid else 'invalid_square'
         target_piece = current_board[target_position][2] if next_square_is_valid else 'invalid_piece'
         if(not next_square_is_valid):
             break
@@ -213,8 +216,9 @@ def rook_threatened_squares(current_position, current_board):
 
     #-y direction
     for dy_down in range(1,8):
-        next_square_is_valid = isValidBoardCoordinates(x_coord, y_coord - dy_down)
-        target_position = inverted_squares_map[str(x_coord)+','+str(y_coord - dy_down)] if next_square_is_valid else 'invalid_square'
+        y_coord_down = normalized_arithmetic(color, "diff", y_coord, dy_down)
+        next_square_is_valid = isValidBoardCoordinates(x_coord, y_coord_down)
+        target_position = inverted_squares_map[str(x_coord)+','+str(y_coord_down)] if next_square_is_valid else 'invalid_square'
         target_piece = current_board[target_position][2] if next_square_is_valid else 'invalid_piece'
         if(not next_square_is_valid):
             break
@@ -241,8 +245,10 @@ def bishop_threatened_squares(current_position, current_board):
 
     #1:15 direction
     for dz_up_right in range(1,8):
-        next_square_is_valid = isValidBoardCoordinates(x_coord + dz_up_right, y_coord + dz_up_right)
-        target_position = inverted_squares_map[str(x_coord + dz_up_right)+','+str(y_coord + dz_up_right)] if next_square_is_valid else 'invalid_square'
+        x_coord_up_right = normalized_arithmetic(color, "sum", x_coord, dz_up_right)
+        y_coord_up_right = normalized_arithmetic(color, "sum", y_coord, dz_up_right)
+        next_square_is_valid = isValidBoardCoordinates(x_coord_up_right, y_coord_up_right)
+        target_position = inverted_squares_map[str(x_coord_up_right)+','+str(y_coord_up_right)] if next_square_is_valid else 'invalid_square'
         target_piece = current_board[target_position][2] if next_square_is_valid else 'invalid_piece'
         if(not next_square_is_valid):
             break
@@ -257,8 +263,10 @@ def bishop_threatened_squares(current_position, current_board):
     
     #4:15 direction
     for dz_down_right in range(1,8):
-        next_square_is_valid = isValidBoardCoordinates(x_coord + dz_down_right, y_coord - dz_down_right)
-        target_position = inverted_squares_map[str(x_coord + dz_down_right)+','+str(y_coord - dz_down_right)] if next_square_is_valid else 'invalid_square'
+        x_coord_down_right = normalized_arithmetic(color, "sum", x_coord, dz_down_right)
+        y_coord_down_right = normalized_arithmetic(color, "diff", y_coord, dz_down_right)
+        next_square_is_valid = isValidBoardCoordinates(x_coord_down_right, y_coord_down_right)
+        target_position = inverted_squares_map[str(x_coord_down_right)+','+str(y_coord_down_right)] if next_square_is_valid else 'invalid_square'
         target_piece = current_board[target_position][2] if next_square_is_valid else 'invalid_piece'
         if(not next_square_is_valid):
             break
@@ -273,8 +281,10 @@ def bishop_threatened_squares(current_position, current_board):
 
     #10:15 direction
     for dz_up_left in range(1,8):
-        next_square_is_valid = isValidBoardCoordinates(x_coord - dz_up_left, y_coord + dz_up_left)
-        target_position = inverted_squares_map[str(x_coord - dz_up_left)+','+str(y_coord + dz_up_left)] if next_square_is_valid else 'invalid_square'
+        x_coord_up_left = normalized_arithmetic(color, "diff", x_coord, dz_up_left)
+        y_coord_up_left = normalized_arithmetic(color, "sum", y_coord, dz_up_left)
+        next_square_is_valid = isValidBoardCoordinates(x_coord_up_left, y_coord_up_left)
+        target_position = inverted_squares_map[str(x_coord_up_left)+','+str(y_coord_up_left)] if next_square_is_valid else 'invalid_square'
         target_piece = current_board[target_position][2] if next_square_is_valid else 'invalid_piece'
         if(not next_square_is_valid):
             break
@@ -289,8 +299,10 @@ def bishop_threatened_squares(current_position, current_board):
 
     #7:15 direction
     for dz_down_left in range(1,8):
-        next_square_is_valid = isValidBoardCoordinates(x_coord - dz_down_left, y_coord - dz_down_left)
-        target_position = inverted_squares_map[str(x_coord - dz_down_left)+','+str(y_coord - dz_down_left)] if next_square_is_valid else 'invalid_square'
+        x_coord_down_left = normalized_arithmetic(color, "diff", x_coord, dz_down_left)
+        y_coord_down_left = normalized_arithmetic(color, "diff", y_coord, dz_down_left)
+        next_square_is_valid = isValidBoardCoordinates(x_coord_down_left, y_coord_down_left)
+        target_position = inverted_squares_map[str(x_coord_down_left)+','+str(y_coord_down_left)] if next_square_is_valid else 'invalid_square'
         target_piece = current_board[target_position][2] if next_square_is_valid else 'invalid_piece'
         if(not next_square_is_valid):
             break
@@ -441,21 +453,21 @@ def all_threatened_squares(current_board):
 
 ### Tests
 
-sampleBoard = {"a1":[0,0,""],"b1":[1,0,"WQN"],"c1":[2,0,""],"d1":[3,0,"WQ"],"e1":[4,0,""], "f1":[5,0,"WKB"], "g1":[6,0,""], "h1":[7,0,"WKR"], 
+sampleBoard = {"a1":[0,0,""],"b1":[1,0,"WQN"],"c1":[2,0,""],"d1":[3,0,""],"e1":[4,0,""], "f1":[5,0,"WKB"], "g1":[6,0,""], "h1":[7,0,"WKR"], 
          
 "a2":[0,1,"Wp1"],"b2":[1,1,"Wp2"],"c2":[2,1,"Wp3"],"d2":[3,1,"Wp4"],"e2":[4,1,"Wp5"], "f2":[5,1,"Wp6"], "g2":[6,1,"Wp7"], "h2":[7,1,"Wp8"],
          
 "a3":[0,2,""],"b3":[1,2,""],"c3":[2,2,""],"d3":[3,2,""],"e3":[4,2,""], "f3":[5,2,"WKN"], "g3":[6,2,""], "h3":[7,2,""],
 
-"a4":[0,3,""],"b4":[1,3,""],"c4":[2,3,"WQR"],"d4":[3,3,""],"e4":[4,3,"WK"], "f4":[5,3,""], "g4":[6,3,""], "h4":[7,3,""],  
+"a4":[0,3,""],"b4":[1,3,""],"c4":[2,3,"WQR"],"d4":[3,3,""],"e4":[4,3,"WK"], "f4":[5,3,""], "g4":[6,3,"WQ"], "h4":[7,3,""],  
 
-"a5":[0,4,""],"b5":[1,4,""],"c5":[2,4,""],"d5":[3,4,""],"e5":[4,4,""], "f5":[5,4,""], "g5":[6,4,"BKR"], "h5":[7,4,""],
+"a5":[0,4,""],"b5":[1,4,""],"c5":[2,4,""],"d5":[3,4,"BQB"],"e5":[4,4,""], "f5":[5,4,""], "g5":[6,4,"BKR"], "h5":[7,4,""],
 
-"a6":[0,5,""],"b6":[1,5,""],"c6":[2,5,""],"d6":[3,5,""],"e6":[4,5,"WQB"], "f6":[5,5,"BKN"], "g6":[6,5,""], "h6":[7,5,""],
+"a6":[0,5,""],"b6":[1,5,""],"c6":[2,5,"BK"],"d6":[3,5,""],"e6":[4,5,"WQB"], "f6":[5,5,"BKN"], "g6":[6,5,""], "h6":[7,5,""],
 
 "a7":[0,6,"Bp8"],"b7":[1,6,"Bp7"],"c7":[2,6,"Bp6"],"d7":[3,6,"Bp5"],"e7":[4,6,"Bp4"], "f7":[5,6,"Bp3"], "g7":[6,6,"Bp2"], "h7":[7,6,"Bp1"], 
 
-"a8":[0,7,"BQR"],"b8":[1,7,"BQN"],"c8":[2,7,"BQB"],"d8":[3,7,"BQ"],"e8":[4,7,"BK"], "f8":[5,7,"BKB"], "g8":[6,7,""], "h8":[7,7,""]
+"a8":[0,7,"BQR"],"b8":[1,7,"BQN"],"c8":[2,7,""],"d8":[3,7,"BQ"],"e8":[4,7,""], "f8":[5,7,"BKB"], "g8":[6,7,""], "h8":[7,7,""]
          
          }
 
@@ -463,10 +475,12 @@ sampleBoard = {"a1":[0,0,""],"b1":[1,0,"WQN"],"c1":[2,0,""],"d1":[3,0,"WQ"],"e1"
 # print(pawn_threatened_squares('c2', sampleBoardWhite)) #['d3', 'b3']
 # print(knight_threatened_squares('f3', sampleBoardWhite)) #['h4', 'g5', 'd4', 'e5', 'g1', 'e1']
 # print(knight_threatened_squares('f6', sampleBoardWhite)) #['d5', 'e4', 'h5', 'g4', 'g8']
-print(rook_threatened_squares('c4', sampleBoard)) #['d4', 'b4', 'a4', 'c5', 'c6', 'c7', 'c3']
-print(rook_threatened_squares('g5', sampleBoard)) #[]
-# print(bishop_threatened_squares('e6', sampleBoardWhite)) #['f7', 'f5', 'g4', 'h3', 'd7', 'd5']
-# print(king_threatened_squares('e4', sampleBoardWhite)) #['e5', 'f5', 'e5', 'f3', 'e3', 'd3', 'e3', 'd5']
+# print(rook_threatened_squares('c4', sampleBoard)) #['d4', 'b4', 'a4', 'c5', 'c6', 'c7', 'c3']
+# print(rook_threatened_squares('g5', sampleBoard)) #['f5', 'e5', 'd5', 'c5', 'b5', 'a5', 'h5', 'g4', 'g6']
+# print(bishop_threatened_squares('e6', sampleBoard)) #['f7', 'f5', 'd7', 'd5']
+# print(bishop_threatened_squares('d5', sampleBoard)) #['c4', 'c6', 'e4', 'e6']
+print(king_threatened_squares('e4', sampleBoard)) #['e5', 'f5', 'e5', 'f3', 'e3', 'd3', 'e3', 'd5']
+print(king_threatened_squares('c6', sampleBoard)) #['e5', 'f5', 'e5', 'f3', 'e3', 'd3', 'e3', 'd5']
 # print(extract_piece_name_and_color("Bk"))
 
 #print(all_threatened_squares(sampleBoardWhite))
