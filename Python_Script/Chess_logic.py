@@ -291,6 +291,74 @@ def rook_threatened_squares(current_position, current_board):
             break
     return rook_threats
 
+def bishop_threatened_squares(current_position, current_board):
+    """
+    A Bishop can potentially attack in 4 diagonal directions (z_up_right(1:15 on a clock), z_down_right(4:15 on a clock), 
+    z_up_left(10:15 on a clock), z_down_left(7:15 on a clock)).
+    We'll check each of these directions for validity and occupation
+    """
+    bishop_threats = []
+    x_coord = squares[current_position][0]
+    y_coord = squares[current_position][1]
+    color = current_board[current_position][2][0]
+
+    #1:15 direction
+    for dz_up_right in range(1,8):
+        next_square_is_valid = isValidBoardCoordinates(x_coord + dz_up_right, y_coord + dz_up_right)
+        target_position = inverted_squares_map[str(x_coord + dz_up_right)+','+str(y_coord + dz_up_right)] if next_square_is_valid else 'invalid_square'
+        target_piece = current_board[target_position][2] if next_square_is_valid else 'invalid_piece'
+        if(not next_square_is_valid):
+            break
+        if(next_square_is_valid and len(target_piece)==0):
+            bishop_threats.append(target_position)
+            continue
+        if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
+            bishop_threats.append(target_position)
+            break
+    
+    #4:15 direction
+    for dz_down_right in range(1,8):
+        next_square_is_valid = isValidBoardCoordinates(x_coord + dz_down_right, y_coord - dz_down_right)
+        target_position = inverted_squares_map[str(x_coord + dz_down_right)+','+str(y_coord - dz_down_right)] if next_square_is_valid else 'invalid_square'
+        target_piece = current_board[target_position][2] if next_square_is_valid else 'invalid_piece'
+        if(not next_square_is_valid):
+            break
+        if(next_square_is_valid and len(target_piece)==0):
+            bishop_threats.append(target_position)
+            continue
+        if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
+            bishop_threats.append(target_position)
+            break
+
+    #10:15 direction
+    for dz_up_left in range(1,8):
+        next_square_is_valid = isValidBoardCoordinates(x_coord - dz_up_left, y_coord + dz_up_left)
+        target_position = inverted_squares_map[str(x_coord - dz_up_left)+','+str(y_coord + dz_up_left)] if next_square_is_valid else 'invalid_square'
+        target_piece = current_board[target_position][2] if next_square_is_valid else 'invalid_piece'
+        if(not next_square_is_valid):
+            break
+        if(next_square_is_valid and len(target_piece)==0):
+            bishop_threats.append(target_position)
+            continue
+        if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
+            bishop_threats.append(target_position)
+            break
+
+    #7:15 direction
+    for dz_down_left in range(1,8):
+        next_square_is_valid = isValidBoardCoordinates(x_coord - dz_down_left, y_coord - dz_down_left)
+        target_position = inverted_squares_map[str(x_coord - dz_down_left)+','+str(y_coord - y_coord - dz_down_left)] if next_square_is_valid else 'invalid_square'
+        target_piece = current_board[target_position][2] if next_square_is_valid else 'invalid_piece'
+        if(not next_square_is_valid):
+            break
+        if(next_square_is_valid and len(target_piece)==0):
+            bishop_threats.append(target_position)
+            continue
+        if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
+            bishop_threats.append(target_position)
+            break
+    return bishop_threats
+
 def move_validity_knight(knight_move):
     """
     1. Checks the validity of a knight's move. Typically, the distance((x1 -x2)/(y1-y2)) between the current position (x1, y1) of a knight and the proposed posiiton (x2, y2) should be -0.5, or 0.5, or -2. or 2
