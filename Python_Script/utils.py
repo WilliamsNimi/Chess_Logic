@@ -6,18 +6,38 @@ def isValidBoardCoordinates(x_coord, y_coord):
     VALID_Y_COORD = y_coord>=0 and y_coord<=7
     return VALID_X_COORD and VALID_Y_COORD
 
+def normalized_arithmetic(color, operation, value1, value2):
+  """
+  Since we're rotating the board 180 degrees for black,
+  the addition and subtraction movement operations have to be flipped
+  """
+  if(str(color).lower() == "b"):
+    if(operation == "sum"):
+      return value1 - value2
+    elif(operation == "diff"):
+      return value1 + value2
+  else:
+    if(operation == "sum"):
+      return value1 + value2
+    elif(operation == "diff"):
+      return value1 - value2
+
 def pawn_threatened_squares(current_position, current_board):
     pawn_threats = []
     x_coord = squares[current_position][0]
     y_coord = squares[current_position][1]
-    top_right_square_is_valid = isValidBoardCoordinates(x_coord+1, y_coord+1)
-    top_left_square_is_valid = isValidBoardCoordinates(x_coord-1, y_coord+1)
+    color = current_board[current_position][2][0]
+    top_right_x_coord = normalized_arithmetic(color, "sum", x_coord, 1)
+    top_right_y_coord = normalized_arithmetic(color, "sum", y_coord, 1)
+    top_left_x_coord = normalized_arithmetic(color, "diff", x_coord, 1)
+    top_left_y_coord = normalized_arithmetic(color, "sum", y_coord, 1)
+    top_right_square_is_valid = isValidBoardCoordinates(top_right_x_coord, top_right_y_coord)
+    top_left_square_is_valid = isValidBoardCoordinates(top_left_x_coord, top_left_y_coord)
      #using ternary operator to prevent key error when the coordinates are invalid
-    right_target_position = inverted_squares_map[str(x_coord+1)+','+str(y_coord+1)] if top_right_square_is_valid else 'invalid_square'
-    left_target_position = inverted_squares_map[str(x_coord-1)+','+str(y_coord+1)] if top_left_square_is_valid else 'invalid_square'
+    right_target_position = inverted_squares_map[str(top_right_x_coord)+','+str(top_right_y_coord)] if top_right_square_is_valid else 'invalid_square'
+    left_target_position = inverted_squares_map[str(top_left_x_coord)+','+str(top_left_y_coord)] if top_left_square_is_valid else 'invalid_square'
     right_target_piece = current_board[right_target_position][2] if top_right_square_is_valid else 'invalid_piece'
     left_target_piece = current_board[left_target_position][2] if top_left_square_is_valid else 'invalid_piece'
-    color = current_board[current_position][2][0]
 
     #Check if the top right square is valid, empty or of a different color
     if(top_right_square_is_valid and len(right_target_piece)==0):
@@ -422,8 +442,8 @@ sampleBoardWhite = {"a1":[0,0,""],"b1":[1,0,"WQN"],"c1":[2,0,""],"d1":[3,0,"WQ"]
          
          }
 
-# print(pawn_threatened_squares('e7', sampleBoardWhite)) #[]
-# print(pawn_threatened_squares('a2', sampleBoardWhite)) #['b3']
+# print(pawn_threatened_squares('e7', sampleBoardWhite)) #['d6', 'f6']
+# print(pawn_threatened_squares('c2', sampleBoardWhite)) #['d3', 'b3']
 # print(knight_threatened_squares('b1', sampleBoardWhite)) #['c3', 'a3']
 # print(knight_threatened_squares('g8', sampleBoardWhite)) #['h6', 'f6']
 # print(rook_threatened_squares('c4', sampleBoardWhite)) #['d4', 'b4', 'a4', 'c5', 'c6', 'c7', 'c3']
