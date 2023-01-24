@@ -121,10 +121,11 @@ def pawn_threatened_squares(current_position, current_board):
     y_coord = squares[current_position][1]
     top_right_square_is_valid = isValidBoardCoordinates(x_coord+1, y_coord+1)
     top_left_square_is_valid = isValidBoardCoordinates(x_coord-1, y_coord+1)
-    right_target_position = inverted_squares_map[str(x_coord+1)+','+str(y_coord+1)]
-    left_target_position = inverted_squares_map[str(x_coord-1)+','+str(y_coord+1)]
-    right_target_piece = current_board[right_target_position][2]
-    left_target_piece = current_board[left_target_position][2]
+     #using ternary operator to prevent key error when the coordinates are invalid
+    right_target_position = inverted_squares_map[str(x_coord+1)+','+str(y_coord+1)] if top_right_square_is_valid else 'invalid_square'
+    left_target_position = inverted_squares_map[str(x_coord-1)+','+str(y_coord+1)] if top_left_square_is_valid else 'invalid_square'
+    right_target_piece = current_board[right_target_position][2] if top_right_square_is_valid else 'invalid_piece'
+    left_target_piece = current_board[left_target_position][2] if top_left_square_is_valid else 'invalid_piece'
     color = current_board[current_position][2][0]
 
     #Check if the top right square is valid, empty or of a different color
@@ -138,6 +139,81 @@ def pawn_threatened_squares(current_position, current_board):
     if(top_left_square_is_valid and len(left_target_piece)>=1 and left_target_piece[0]!=color):
         pawn_threats.append(left_target_position)
     return pawn_threats
+
+def knight_threatened_squares(current_position, current_board):
+    knight_threats = []
+    x_coord = squares[current_position][0]
+    y_coord = squares[current_position][1]
+    #Check if potential target squares are present on the board
+    top_near_right_square_is_valid = isValidBoardCoordinates(x_coord+2, y_coord+1)
+    top_far_right_square_is_valid = isValidBoardCoordinates(x_coord+1, y_coord+2)
+    top_near_left_square_is_valid = isValidBoardCoordinates(x_coord-2, y_coord+1)
+    top_far_left_square_is_valid = isValidBoardCoordinates(x_coord-1, y_coord+2)
+    bottom_near_right_square_is_valid = isValidBoardCoordinates(x_coord+2, y_coord-1)
+    bottom_far_right_square_is_valid = isValidBoardCoordinates(x_coord+1, y_coord-2)
+    bottom_near_left_square_is_valid = isValidBoardCoordinates(x_coord-2, y_coord-1)
+    bottom_far_left_square_is_valid = isValidBoardCoordinates(x_coord-1, y_coord-2)
+
+    top_near_right_target_position = inverted_squares_map[str(x_coord+2)+','+str(y_coord+1)] if top_near_right_square_is_valid else 'invalid_square'
+    top_far_right_target_position = inverted_squares_map[str(x_coord+1)+','+str(y_coord+2)] if top_far_right_square_is_valid else 'invalid_square'
+    top_near_left_target_position = inverted_squares_map[str(x_coord-2)+','+str(y_coord+1)] if top_near_left_square_is_valid else 'invalid_square'
+    top_far_left_target_position = inverted_squares_map[str(x_coord-1)+','+str(y_coord+2)] if top_far_left_square_is_valid else 'invalid_square'
+    bottom_near_right_target_position = inverted_squares_map[str(x_coord+2)+','+str(y_coord-1)] if bottom_near_right_square_is_valid else 'invalid_square'
+    bottom_far_right_target_position = inverted_squares_map[str(x_coord+1)+','+str(y_coord-2)] if bottom_far_right_square_is_valid else 'invalid_square'
+    bottom_near_left_target_position = inverted_squares_map[str(x_coord-2)+','+str(y_coord-1)] if bottom_near_left_square_is_valid else 'invalid_square'
+    bottom_far_left_target_position = inverted_squares_map[str(x_coord-1)+','+str(y_coord-2)] if bottom_far_left_square_is_valid else 'invalid_square'
+
+    top_near_right_target_piece = current_board[top_near_right_target_position][2] if top_near_right_square_is_valid else 'invalid_piece'
+    top_far_right_target_piece = current_board[top_far_right_target_position][2] if top_far_right_square_is_valid else 'invalid_piece'
+    top_near_left_target_piece = current_board[top_near_left_target_position][2] if top_near_left_square_is_valid else 'invalid_piece'
+    top_far_left_target_piece = current_board[top_far_left_target_position][2] if top_far_left_square_is_valid else 'invalid_piece'
+    bottom_near_right_target_piece = current_board[bottom_near_right_target_position][2] if bottom_near_right_square_is_valid else 'invalid_piece'
+    bottom_far_right_target_piece = current_board[bottom_far_right_target_position][2] if bottom_far_right_square_is_valid else 'invalid_piece'
+    bottom_near_left_target_piece = current_board[bottom_near_left_target_position][2] if bottom_near_left_square_is_valid else 'invalid_piece'
+    bottom_far_left_target_piece = current_board[bottom_far_left_target_position][2] if bottom_far_left_square_is_valid else 'invalid_piece'
+    color = current_board[current_position][2][0]
+
+    if(top_near_right_square_is_valid and len(top_near_right_target_piece)==0):
+        knight_threats.append(top_near_right_target_position)
+    if(top_near_right_square_is_valid and len(top_near_right_target_piece)>=1 and top_near_right_target_piece[0]!=color):
+        knight_threats.append(top_near_right_target_position)
+
+    if(top_far_right_square_is_valid and len(top_far_right_target_piece)==0):
+        knight_threats.append(top_far_right_target_position)
+    if(top_far_right_square_is_valid and len(top_far_right_target_piece)>=1 and top_far_right_target_piece[0]!=color):
+        knight_threats.append(top_far_right_target_position)
+
+    if(top_near_left_square_is_valid and len(top_near_left_target_piece)==0):
+        knight_threats.append(top_near_right_target_position)
+    if(top_near_left_square_is_valid and len(top_near_left_target_piece)>=1 and top_near_left_target_piece[0]!=color):
+        knight_threats.append(top_near_left_target_position)
+
+    if(top_far_left_square_is_valid and len(top_far_left_target_piece)==0):
+        knight_threats.append(top_far_left_target_position)
+    if(top_far_left_square_is_valid and len(top_far_left_target_piece)>=1 and top_far_left_target_piece[0]!=color):
+        knight_threats.append(top_far_left_target_position)
+
+    if(bottom_near_right_square_is_valid and len(bottom_near_right_target_piece)==0):
+        knight_threats.append(bottom_near_right_target_position)
+    if(bottom_near_right_square_is_valid and len(bottom_near_right_target_piece)>=1 and bottom_near_right_target_piece[0]!=color):
+        knight_threats.append(bottom_near_right_target_position)
+
+    if(bottom_far_right_square_is_valid and len(bottom_far_right_target_piece)==0):
+        knight_threats.append(bottom_far_right_target_position)
+    if(bottom_far_right_square_is_valid and len(bottom_far_right_target_piece)>=1 and bottom_far_right_target_piece[0]!=color):
+        knight_threats.append(bottom_far_right_target_position)
+
+    if(bottom_near_left_square_is_valid and len(bottom_near_left_target_piece)==0):
+        knight_threats.append(bottom_near_right_target_position)
+    if(bottom_near_left_square_is_valid and len(bottom_near_left_target_piece)>=1 and bottom_near_left_target_piece[0]!=color):
+        knight_threats.append(bottom_near_left_target_position)
+
+    if(bottom_far_left_square_is_valid and len(bottom_far_left_target_piece)==0):
+        knight_threats.append(bottom_far_left_target_position)
+    if(bottom_far_left_square_is_valid and len(bottom_far_left_target_piece)>=1 and bottom_far_left_target_piece[0]!=color):
+        knight_threats.append(bottom_far_left_target_position)
+    
+    return knight_threats
 
 def move_validity_knight(knight_move):
     """
