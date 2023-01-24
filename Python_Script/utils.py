@@ -492,8 +492,8 @@ sampleBoard = {"a1":[0,0,""],"b1":[1,0,"WQN"],"c1":[2,0,""],"d1":[3,0,""],"e1":[
 # print(bishop_threatened_squares('d5', sampleBoard)) #['c4', 'c6', 'e4', 'e6']
 # print(queen_threatened_squares('g4', sampleBoard)) #['h5', 'h3', 'f5', 'h4', 'f4', 'g5', 'g3']
 # print(queen_threatened_squares('b5', sampleBoard)) #['a4', 'a6', 'c4', 'a5', 'c5', 'b4', 'b3', 'b2', 'b6']
-# print(king_threatened_squares('e4', sampleBoard)) #['e5', 'f5', 'e5', 'f3', 'e3', 'd3', 'e3', 'd5']
-# print(king_threatened_squares('c6', sampleBoard)) #['e5', 'f5', 'e5', 'f3', 'e3', 'd3', 'e3', 'd5']
+# print(king_threatened_squares('e4', sampleBoard)) #['e5', 'f5', 'f4', 'e3', 'd3', 'd4', 'd5']
+# print(king_threatened_squares('c6', sampleBoard)) #['c5', 'b6', 'd6']
 # print(extract_piece_name_and_color("Bk"))
 
 # print(all_threatened_squares(sampleBoard))
