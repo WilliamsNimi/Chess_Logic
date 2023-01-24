@@ -141,6 +141,13 @@ def pawn_threatened_squares(current_position, current_board):
     return pawn_threats
 
 def knight_threatened_squares(current_position, current_board):
+    """
+    The knight has 8 potentially valid destination squares it can attack.
+    We'll check each of these to see if they're:
+    1. On the board
+    2. Are occupied by any pieces (and the color of the occupying piece)
+    3. Determine based on 1 and 2 whether the square is threatened by the knight
+    """
     knight_threats = []
     x_coord = squares[current_position][0]
     y_coord = squares[current_position][1]
@@ -154,6 +161,7 @@ def knight_threatened_squares(current_position, current_board):
     bottom_near_left_square_is_valid = isValidBoardCoordinates(x_coord-2, y_coord-1)
     bottom_far_left_square_is_valid = isValidBoardCoordinates(x_coord-1, y_coord-2)
 
+    #map potential target square coordinates to a board position in standard chess notation
     top_near_right_target_position = inverted_squares_map[str(x_coord+2)+','+str(y_coord+1)] if top_near_right_square_is_valid else 'invalid_square'
     top_far_right_target_position = inverted_squares_map[str(x_coord+1)+','+str(y_coord+2)] if top_far_right_square_is_valid else 'invalid_square'
     top_near_left_target_position = inverted_squares_map[str(x_coord-2)+','+str(y_coord+1)] if top_near_left_square_is_valid else 'invalid_square'
@@ -163,6 +171,7 @@ def knight_threatened_squares(current_position, current_board):
     bottom_near_left_target_position = inverted_squares_map[str(x_coord-2)+','+str(y_coord-1)] if bottom_near_left_square_is_valid else 'invalid_square'
     bottom_far_left_target_position = inverted_squares_map[str(x_coord-1)+','+str(y_coord-2)] if bottom_far_left_square_is_valid else 'invalid_square'
 
+    #check which piece if any is occupying the potential target squares
     top_near_right_target_piece = current_board[top_near_right_target_position][2] if top_near_right_square_is_valid else 'invalid_piece'
     top_far_right_target_piece = current_board[top_far_right_target_position][2] if top_far_right_square_is_valid else 'invalid_piece'
     top_near_left_target_piece = current_board[top_near_left_target_position][2] if top_near_left_square_is_valid else 'invalid_piece'
@@ -214,6 +223,72 @@ def knight_threatened_squares(current_position, current_board):
         knight_threats.append(bottom_far_left_target_position)
     
     return knight_threats
+
+def rook_threatened_squares(current_position, current_board):
+    """
+    A rook can potentially attack in 4 vertical directions (+x, -x, +y, -y).
+    We'll check each of these directions for validity and occupation
+    """
+    rook_threats = []
+    x_coord = squares[current_position][0]
+    y_coord = squares[current_position][1]
+    color = current_board[current_position][2][0]
+
+    #+x direction
+    for dx_up in range(1,8):
+        next_square_is_valid = isValidBoardCoordinates(x_coord+dx_up, y_coord)
+        target_position = inverted_squares_map[str(x_coord+dx_up)+','+str(y_coord)] if next_square_is_valid else 'invalid_square'
+        target_piece = current_board[target_position][2] if next_square_is_valid else 'invalid_piece'
+        if(not next_square_is_valid):
+            break
+        if(next_square_is_valid and len(target_piece)==0):
+            rook_threats.append(target_position)
+            continue
+        if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
+            rook_threats.append(target_position)
+            break
+    
+    #-x direction
+    for dx_down in range(1,8):
+        next_square_is_valid = isValidBoardCoordinates(x_coord - dx_down, y_coord)
+        target_position = inverted_squares_map[str(x_coord - dx_down)+','+str(y_coord)] if next_square_is_valid else 'invalid_square'
+        target_piece = current_board[target_position][2] if next_square_is_valid else 'invalid_piece'
+        if(not next_square_is_valid):
+            break
+        if(next_square_is_valid and len(target_piece)==0):
+            rook_threats.append(target_position)
+            continue
+        if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
+            rook_threats.append(target_position)
+            break
+
+    #+y direction
+    for dy_up in range(1,8):
+        next_square_is_valid = isValidBoardCoordinates(x_coord, y_coord + dy_up)
+        target_position = inverted_squares_map[str(x_coord)+','+str(y_coord + dy_up)] if next_square_is_valid else 'invalid_square'
+        target_piece = current_board[target_position][2] if next_square_is_valid else 'invalid_piece'
+        if(not next_square_is_valid):
+            break
+        if(next_square_is_valid and len(target_piece)==0):
+            rook_threats.append(target_position)
+            continue
+        if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
+            rook_threats.append(target_position)
+            break
+
+    #-y direction
+    for dy_down in range(1,8):
+        next_square_is_valid = isValidBoardCoordinates(x_coord, y_coord - dy_down)
+        target_position = inverted_squares_map[str(x_coord)+','+str(y_coord - dy_down)] if next_square_is_valid else 'invalid_square'
+        target_piece = current_board[target_position][2] if next_square_is_valid else 'invalid_piece'
+        if(not next_square_is_valid):
+            break
+        if(next_square_is_valid and len(target_piece)==0):
+            rook_threats.append(target_position)
+            continue
+        if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
+            rook_threats.append(target_position)
+            break
 
 def move_validity_knight(knight_move):
     """
