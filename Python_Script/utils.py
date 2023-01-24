@@ -499,6 +499,7 @@ def all_threatened_squares(current_board):
 #          }
 
 # print(pawn_threatened_squares('e7', sampleBoard)) #['d6', 'f6']
+# print(pawn_threatened_squares('a7', sampleBoard, True)) #['b6', 'a6', 'a5']
 # print(pawn_threatened_squares('d2', sampleBoard, True)) #['e3', 'c3', 'd3', 'd4']
 # print(pawn_threatened_squares('a3', sampleBoard, True)) #['b4', 'a4']
 # print(pawn_threatened_squares('c2', sampleBoard)) #['d3', 'b3']
