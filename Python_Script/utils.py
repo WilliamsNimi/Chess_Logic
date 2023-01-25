@@ -22,7 +22,7 @@ def normalized_arithmetic(color, operation, value1, value2):
     elif(operation == "diff"):
       return value1 - value2
 
-def pawn_threatened_squares(current_position, current_board, validity_check=False):
+def pawn_threatened_squares(current_position, current_board, validity_check=False, include_defended_squares=False):
     pawn_threats = []
     x_coord = squares[current_position][0]
     y_coord = squares[current_position][1]
@@ -49,6 +49,13 @@ def pawn_threatened_squares(current_position, current_board, validity_check=Fals
         pawn_threats.append(left_target_position)
     if(top_left_square_is_valid and len(left_target_piece)>=1 and left_target_piece[0]!=color):
         pawn_threats.append(left_target_position)
+
+    if(include_defended_squares):
+        if(top_right_square_is_valid and len(right_target_piece)>=1 and right_target_piece[0]==color):
+            pawn_threats.append(right_target_position)
+        if(top_left_square_is_valid and len(left_target_piece)>=1 and left_target_piece[0]==color):
+            pawn_threats.append(left_target_position)
+
     if(validity_check):
       base_row_dict = {"w": 1, "b": 6}
       PAWN_HAS_NOT_MOVED = y_coord == base_row_dict[str(color).lower()]
@@ -67,7 +74,7 @@ def pawn_threatened_squares(current_position, current_board, validity_check=Fals
 
     return pawn_threats
 
-def knight_threatened_squares(current_position, current_board):
+def knight_threatened_squares(current_position, current_board, include_defended_squares=False):
     """
     The knight has 8 potentially valid destination squares it can attack.
     We'll check each of these to see if they're:
@@ -165,10 +172,28 @@ def knight_threatened_squares(current_position, current_board):
         knight_threats.append(bottom_far_left_target_position)
     if(bottom_far_left_square_is_valid and len(bottom_far_left_target_piece)>=1 and bottom_far_left_target_piece[0]!=color):
         knight_threats.append(bottom_far_left_target_position)
+
+    if(include_defended_squares):
+        if(top_near_left_square_is_valid and len(top_near_left_target_piece)>=1 and top_near_left_target_piece[0]==color):
+            knight_threats.append(top_near_left_target_position)
+        if(top_far_right_square_is_valid and len(top_far_right_target_piece)>=1 and top_far_right_target_piece[0]==color):
+            knight_threats.append(top_far_right_target_position)
+        if(top_near_left_square_is_valid and len(top_near_left_target_piece)>=1 and top_near_left_target_piece[0]==color):
+            knight_threats.append(top_near_left_target_position)
+        if(top_far_left_square_is_valid and len(top_far_left_target_piece)>=1 and top_far_left_target_piece[0]==color):
+            knight_threats.append(top_far_left_target_position)
+        if(bottom_near_right_square_is_valid and len(bottom_near_right_target_piece)>=1 and bottom_near_right_target_piece[0]==color):
+            knight_threats.append(bottom_near_right_target_position)
+        if(bottom_far_right_square_is_valid and len(bottom_far_right_target_piece)>=1 and bottom_far_right_target_piece[0]==color):
+            knight_threats.append(bottom_far_right_target_position)
+        if(bottom_near_left_square_is_valid and len(bottom_near_left_target_piece)>=1 and bottom_near_left_target_piece[0]==color):
+            knight_threats.append(bottom_near_left_target_position)
+        if(bottom_far_left_square_is_valid and len(bottom_far_left_target_piece)>=1 and bottom_far_left_target_piece[0]==color):
+            knight_threats.append(bottom_far_left_target_position)
     
     return knight_threats
 
-def rook_threatened_squares(current_position, current_board):
+def rook_threatened_squares(current_position, current_board, include_defended_squares=False):
     """
     A rook can potentially attack in 4 vertical directions (+x, -x, +y, -y).
     We'll check each of these directions for validity and occupation
@@ -191,6 +216,8 @@ def rook_threatened_squares(current_position, current_board):
             rook_threats.append(target_position)
             continue
         if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] == color):
+            if(include_defended_squares):
+                rook_threats.append(target_position)
             break
         if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
             rook_threats.append(target_position)
@@ -208,6 +235,8 @@ def rook_threatened_squares(current_position, current_board):
             rook_threats.append(target_position)
             continue
         if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] == color):
+            if(include_defended_squares):
+                rook_threats.append(target_position)
             break
         if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
             rook_threats.append(target_position)
@@ -225,6 +254,8 @@ def rook_threatened_squares(current_position, current_board):
             rook_threats.append(target_position)
             continue
         if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] == color):
+            if(include_defended_squares):
+                rook_threats.append(target_position)
             break
         if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
             rook_threats.append(target_position)
@@ -242,13 +273,15 @@ def rook_threatened_squares(current_position, current_board):
             rook_threats.append(target_position)
             continue
         if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] == color):
+            if(include_defended_squares):
+                rook_threats.append(target_position)
             break
         if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
             rook_threats.append(target_position)
             break
     return rook_threats
 
-def bishop_threatened_squares(current_position, current_board):
+def bishop_threatened_squares(current_position, current_board, include_defended_squares=False):
     """
     A Bishop can potentially attack in 4 diagonal directions (z_up_right(1:15 on a clock), z_down_right(4:15 on a clock), 
     z_up_left(10:15 on a clock), z_down_left(7:15 on a clock)).
@@ -272,6 +305,8 @@ def bishop_threatened_squares(current_position, current_board):
             bishop_threats.append(target_position)
             continue
         if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] == color):
+            if(include_defended_squares):
+                bishop_threats.append(target_position)
             break
         if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
             bishop_threats.append(target_position)
@@ -290,6 +325,8 @@ def bishop_threatened_squares(current_position, current_board):
             bishop_threats.append(target_position)
             continue
         if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] == color):
+            if(include_defended_squares):
+                bishop_threats.append(target_position)
             break
         if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
             bishop_threats.append(target_position)
@@ -308,6 +345,8 @@ def bishop_threatened_squares(current_position, current_board):
             bishop_threats.append(target_position)
             continue
         if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] == color):
+            if(include_defended_squares):
+                bishop_threats.append(target_position)
             break
         if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
             bishop_threats.append(target_position)
@@ -326,23 +365,26 @@ def bishop_threatened_squares(current_position, current_board):
             bishop_threats.append(target_position)
             continue
         if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] == color):
+            if(include_defended_squares):
+                bishop_threats.append(target_position)
             break
         if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
             bishop_threats.append(target_position)
             break
     return bishop_threats
 
-def queen_threatened_squares(current_position, current_board):
+def queen_threatened_squares(current_position, current_board, include_defended_squares=False):
 
     """
     A Queen combines the moves of both the Bishop and Rook.
     We'll simply call the existing functions and combine their results
     """
-    bishop_threats = bishop_threatened_squares(current_position, current_board)
-    rook_threats = rook_threatened_squares(current_position, current_board)
+    defended_squares_flag = include_defended_squares
+    bishop_threats = bishop_threatened_squares(current_position, current_board, defended_squares_flag)
+    rook_threats = rook_threatened_squares(current_position, current_board, defended_squares_flag)
     return bishop_threats + rook_threats
 
-def king_threatened_squares(current_position, current_board):
+def king_threatened_squares(current_position, current_board, include_defended_squares=False):
     """
     The king has 8 potentially valid destination squares it can attack.
     We'll check each of these to see if they're:
@@ -436,6 +478,24 @@ def king_threatened_squares(current_position, current_board):
         king_threats.append(top_45_degrees_left_target_position)
     if(top_45_degrees_left_is_valid and len(top_45_degrees_left_target_piece)>=1 and top_45_degrees_left_target_piece[0]!=color):
         king_threats.append(top_45_degrees_left_target_position)
+
+    if(include_defended_squares):
+        if(top_90_degrees_is_valid and len(top_90_degrees_target_piece)>=1 and top_90_degrees_target_piece[0]==color):
+            king_threats.append(top_90_degrees_target_position)
+        if(top_45_degrees_right_is_valid and len(top_45_degrees_right_target_piece)>=1 and top_45_degrees_right_target_piece[0]==color):
+            king_threats.append(top_45_degrees_right_target_position)
+        if(right_90_degrees_is_valid and len(right_90_degrees_target_piece)>=1 and right_90_degrees_target_piece[0]==color):
+            king_threats.append(right_90_degrees_target_position)
+        if(bottom_45_degrees_right_is_valid and len(bottom_45_degrees_right_target_piece)>=1 and bottom_45_degrees_right_target_piece[0]==color):
+            king_threats.append(bottom_45_degrees_right_target_position)
+        if(bottom_90_degrees_is_valid and len(bottom_90_degrees_target_piece)>=1 and bottom_90_degrees_target_piece[0]==color):
+            king_threats.append(bottom_90_degrees_target_position)
+        if(bottom_45_degrees_left_is_valid and len(bottom_45_degrees_left_target_piece)>=1 and bottom_45_degrees_left_target_piece[0]==color):
+            king_threats.append(bottom_45_degrees_left_target_position)
+        if(left_90_degrees_is_valid and len(left_90_degrees_target_piece)>=1 and left_90_degrees_target_piece[0]==color):
+            king_threats.append(left_90_degrees_target_position)
+        if(top_45_degrees_left_is_valid and len(top_45_degrees_left_target_piece)>=1 and top_45_degrees_left_target_piece[0]==color):
+            king_threats.append(top_45_degrees_left_target_position)
     
     return king_threats
 
@@ -499,20 +559,30 @@ def all_threatened_squares(current_board):
 #          }
 
 # print(pawn_threatened_squares('e7', sampleBoard)) #['d6', 'f6']
+# print(pawn_threatened_squares('d7', sampleBoard, False, True)) #['e6', 'c6']
 # print(pawn_threatened_squares('a7', sampleBoard, True)) #['b6', 'a6', 'a5']
 # print(pawn_threatened_squares('d2', sampleBoard, True)) #['e3', 'c3', 'd3', 'd4']
 # print(pawn_threatened_squares('a3', sampleBoard, True)) #['b4', 'a4']
 # print(pawn_threatened_squares('c2', sampleBoard)) #['d3', 'b3']
 # print(knight_threatened_squares('f3', sampleBoard)) #['h4', 'g5', 'd4', 'e5', 'g1', 'e1']
 # print(knight_threatened_squares('f6', sampleBoard)) #['d5', 'e4', 'h5', 'g4', 'g8']
-# print(rook_threatened_squares('c4', sampleBoard)) #['d4', 'b4', 'a4', 'c5', 'c6', 'c7', 'c3']
-# print(rook_threatened_squares('g5', sampleBoard)) #['f5', 'e5', 'd5', 'c5', 'b5', 'a5', 'h5', 'g4', 'g6']
+# print(knight_threatened_squares('f3', sampleBoard, True)) #['h4', 'g5', 'd4', 'e5', 'g1', 'e1', 'h2', 'd2']
+# print(rook_threatened_squares('c4', sampleBoard)) #['d4', 'b4', 'a4', 'c5', 'c6', 'c3']
+# print(rook_threatened_squares('c4', sampleBoard, True)) #['d4', 'e4', 'b4', 'a4', 'c5', 'c6', 'c3', 'c2']
+# print(rook_threatened_squares('g5', sampleBoard)) #['f5', 'e5', 'h5', 'g4', 'g6']
+# print(rook_threatened_squares('g5', sampleBoard, True)) #['f5', 'e5', 'd5', 'h5', 'g4', 'g6', 'g7']
 # print(bishop_threatened_squares('e6', sampleBoard)) #['f7', 'f5', 'd7', 'd5']
-# print(bishop_threatened_squares('d5', sampleBoard)) #['c4', 'c6', 'e4', 'e6']
+# print(bishop_threatened_squares('d5', sampleBoard)) #['c4', 'c6', 'e4']
+# print(bishop_threatened_squares('e6', sampleBoard, True)) #['f7', 'f5', 'g4', 'd7', 'd5']
+# print(bishop_threatened_squares('d5', sampleBoard, True)) #['c4', 'c6', 'e4', 'e6']
 # print(queen_threatened_squares('g4', sampleBoard)) #['h5', 'h3', 'f5', 'h4', 'f4', 'g5', 'g3']
 # print(queen_threatened_squares('b5', sampleBoard)) #['a4', 'a6', 'c4', 'a5', 'c5', 'b4', 'b3', 'b2', 'b6']
+# print(queen_threatened_squares('g4', sampleBoard, True)) #['h5', 'h3', 'f5', 'e6', 'f3', 'h4', 'f4', 'e4', 'g5', 'g3', 'g2']
+# print(queen_threatened_squares('b5', sampleBoard, True)) #['a4', 'a6', 'c4', 'c6', 'a5', 'c5', 'd5', 'b4', 'b3', 'b2', 'b6', 'b7']
 # print(king_threatened_squares('e4', sampleBoard)) #['e5', 'f5', 'f4', 'e3', 'd3', 'd4', 'd5']
 # print(king_threatened_squares('c6', sampleBoard)) #['c5', 'b6', 'd6']
+# print(king_threatened_squares('e4', sampleBoard, True)) #['e5', 'f5', 'f4', 'e3', 'd3', 'd4', 'd5', 'f3']
+# print(king_threatened_squares('c6', sampleBoard, True)) #['e5', 'f5', 'f4', 'e3', 'd3', 'd4', 'd5', 'f3']
 # print(extract_piece_name_and_color("Bk"))
 
 # print(all_threatened_squares(sampleBoard))
