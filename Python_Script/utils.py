@@ -510,7 +510,10 @@ def extract_piece_name_and_color(piece):
   else:
     return {"name": piece[2].lower(), "color": piece[0].lower()}
 
-def all_threatened_squares(current_board):
+def unique(list_with_duplications):
+    return list(set(list_with_duplications))
+
+def all_threatened_and_defended_squares(current_board):
   """
   This function returns a dictionary of all the threatened squares separated by color given the current state of the board.
   Note that the list referenced by index W refers to all black squares threatened by white pieces
@@ -530,9 +533,10 @@ def all_threatened_squares(current_board):
   for(piece_position, value) in current_board.items():
     if(len(value[2]))>0:
       piece_details = extract_piece_name_and_color(value[2])
-      piece_threats = piece_mapping[piece_details["name"]](piece_position, current_board)
+      piece_threats = piece_mapping[piece_details["name"]](piece_position, current_board, True)
       all_threats[piece_details["color"]] += piece_threats
-  
+  all_threats['w'] = unique(all_threats['w'])
+  all_threats['b'] = unique(all_threats['b'])
   return all_threats
 
 
@@ -585,4 +589,5 @@ def all_threatened_squares(current_board):
 # print(king_threatened_squares('c6', sampleBoard, True)) #['e5', 'f5', 'f4', 'e3', 'd3', 'd4', 'd5', 'f3']
 # print(extract_piece_name_and_color("Bk"))
 
-# print(all_threatened_squares(sampleBoard))
+# all_threatened = all_threatened_and_defended_squares(sampleBoard)
+# print(len(all_threatened['w']), len(all_threatened['b']))
