@@ -169,7 +169,7 @@ def knight_move_validity(current_position, current_board):
     
     return knight_threats
 
-def rook_move_validity(current_position, current_board, include_defended_squares=False):
+def rook_move_validity(current_position, current_board):
     """
     A rook can potentially attack in 4 vertical directions (+x, -x, +y, -y).
     We'll check each of these directions for move_validity and occupation
@@ -183,76 +183,68 @@ def rook_move_validity(current_position, current_board, include_defended_squares
     #+x direction
     for dx_up in range(1,8):
         x_coord_up = normalized_arithmetic(color, "sum", x_coord, dx_up)
-        next_square_is_valid = isValidBoardCoordinates(x_coord_up, y_coord)
-        target_position = inverted_squares_map[str(x_coord_up)+','+str(y_coord)] if next_square_is_valid else 'invalid_square'
-        target_piece = current_board[target_position][2] if next_square_is_valid else 'invalid_piece'
-        if(not next_square_is_valid):
+        this_square_is_valid = isValidBoardCoordinates(x_coord_up, y_coord)
+        target_position = inverted_squares_map[str(x_coord_up)+','+str(y_coord)] if this_square_is_valid else 'invalid_square'
+        target_piece = current_board[target_position][2] if this_square_is_valid else 'invalid_piece'
+        if(not this_square_is_valid):
             break
-        if(next_square_is_valid and len(target_piece)==0):
+        if(this_square_is_valid and len(target_piece)==0):
             rook_threats.append(target_position)
             continue
-        if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] == color):
-            if(include_defended_squares):
-                rook_threats.append(target_position)
+        if(this_square_is_valid and len(target_piece) >= 1 and target_piece[0] == color):
             break
-        if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
+        if(this_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
             rook_threats.append(target_position)
             break
     
     #-x direction
     for dx_down in range(1,8):
         x_coord_down = normalized_arithmetic(color, "diff", x_coord, dx_down)
-        next_square_is_valid = isValidBoardCoordinates(x_coord_down, y_coord)
-        target_position = inverted_squares_map[str(x_coord_down)+','+str(y_coord)] if next_square_is_valid else 'invalid_square'
-        target_piece = current_board[target_position][2] if next_square_is_valid else 'invalid_piece'
-        if(not next_square_is_valid):
+        this_square_is_valid = isValidBoardCoordinates(x_coord_down, y_coord)
+        target_position = inverted_squares_map[str(x_coord_down)+','+str(y_coord)] if this_square_is_valid else 'invalid_square'
+        target_piece = current_board[target_position][2] if this_square_is_valid else 'invalid_piece'
+        if(not this_square_is_valid):
             break
-        if(next_square_is_valid and len(target_piece)==0):
+        if(this_square_is_valid and len(target_piece)==0):
             rook_threats.append(target_position)
             continue
-        if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] == color):
-            if(include_defended_squares):
-                rook_threats.append(target_position)
+        if(this_square_is_valid and len(target_piece) >= 1 and target_piece[0] == color):
             break
-        if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
+        if(this_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
             rook_threats.append(target_position)
             break
 
     #+y direction
     for dy_up in range(1,8):
         y_coord_up = normalized_arithmetic(color, "sum", y_coord, dy_up)
-        next_square_is_valid = isValidBoardCoordinates(x_coord, y_coord_up)
-        target_position = inverted_squares_map[str(x_coord)+','+str(y_coord_up)] if next_square_is_valid else 'invalid_square'
-        target_piece = current_board[target_position][2] if next_square_is_valid else 'invalid_piece'
-        if(not next_square_is_valid):
+        this_square_is_valid = isValidBoardCoordinates(x_coord, y_coord_up)
+        target_position = inverted_squares_map[str(x_coord)+','+str(y_coord_up)] if this_square_is_valid else 'invalid_square'
+        target_piece = current_board[target_position][2] if this_square_is_valid else 'invalid_piece'
+        if(not this_square_is_valid):
             break
-        if(next_square_is_valid and len(target_piece)==0):
+        if(this_square_is_valid and len(target_piece)==0):
             rook_threats.append(target_position)
             continue
-        if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] == color):
-            if(include_defended_squares):
-                rook_threats.append(target_position)
+        if(this_square_is_valid and len(target_piece) >= 1 and target_piece[0] == color):
             break
-        if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
+        if(this_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
             rook_threats.append(target_position)
             break
 
     #-y direction
     for dy_down in range(1,8):
         y_coord_down = normalized_arithmetic(color, "diff", y_coord, dy_down)
-        next_square_is_valid = isValidBoardCoordinates(x_coord, y_coord_down)
-        target_position = inverted_squares_map[str(x_coord)+','+str(y_coord_down)] if next_square_is_valid else 'invalid_square'
-        target_piece = current_board[target_position][2] if next_square_is_valid else 'invalid_piece'
-        if(not next_square_is_valid):
+        this_square_is_valid = isValidBoardCoordinates(x_coord, y_coord_down)
+        target_position = inverted_squares_map[str(x_coord)+','+str(y_coord_down)] if this_square_is_valid else 'invalid_square'
+        target_piece = current_board[target_position][2] if this_square_is_valid else 'invalid_piece'
+        if(not this_square_is_valid):
             break
-        if(next_square_is_valid and len(target_piece)==0):
+        if(this_square_is_valid and len(target_piece)==0):
             rook_threats.append(target_position)
             continue
-        if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] == color):
-            if(include_defended_squares):
-                rook_threats.append(target_position)
+        if(this_square_is_valid and len(target_piece) >= 1 and target_piece[0] == color):
             break
-        if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
+        if(this_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
             rook_threats.append(target_position)
             break
     return rook_threats
@@ -272,19 +264,19 @@ def bishop_move_validity(current_position, current_board, include_defended_squar
     for dz_up_right in range(1,8):
         x_coord_up_right = normalized_arithmetic(color, "sum", x_coord, dz_up_right)
         y_coord_up_right = normalized_arithmetic(color, "sum", y_coord, dz_up_right)
-        next_square_is_valid = isValidBoardCoordinates(x_coord_up_right, y_coord_up_right)
-        target_position = inverted_squares_map[str(x_coord_up_right)+','+str(y_coord_up_right)] if next_square_is_valid else 'invalid_square'
-        target_piece = current_board[target_position][2] if next_square_is_valid else 'invalid_piece'
-        if(not next_square_is_valid):
+        this_square_is_valid = isValidBoardCoordinates(x_coord_up_right, y_coord_up_right)
+        target_position = inverted_squares_map[str(x_coord_up_right)+','+str(y_coord_up_right)] if this_square_is_valid else 'invalid_square'
+        target_piece = current_board[target_position][2] if this_square_is_valid else 'invalid_piece'
+        if(not this_square_is_valid):
             break
-        if(next_square_is_valid and len(target_piece)==0):
+        if(this_square_is_valid and len(target_piece)==0):
             bishop_threats.append(target_position)
             continue
-        if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] == color):
+        if(this_square_is_valid and len(target_piece) >= 1 and target_piece[0] == color):
             if(include_defended_squares):
                 bishop_threats.append(target_position)
             break
-        if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
+        if(this_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
             bishop_threats.append(target_position)
             break
     
@@ -292,19 +284,19 @@ def bishop_move_validity(current_position, current_board, include_defended_squar
     for dz_down_right in range(1,8):
         x_coord_down_right = normalized_arithmetic(color, "sum", x_coord, dz_down_right)
         y_coord_down_right = normalized_arithmetic(color, "diff", y_coord, dz_down_right)
-        next_square_is_valid = isValidBoardCoordinates(x_coord_down_right, y_coord_down_right)
-        target_position = inverted_squares_map[str(x_coord_down_right)+','+str(y_coord_down_right)] if next_square_is_valid else 'invalid_square'
-        target_piece = current_board[target_position][2] if next_square_is_valid else 'invalid_piece'
-        if(not next_square_is_valid):
+        this_square_is_valid = isValidBoardCoordinates(x_coord_down_right, y_coord_down_right)
+        target_position = inverted_squares_map[str(x_coord_down_right)+','+str(y_coord_down_right)] if this_square_is_valid else 'invalid_square'
+        target_piece = current_board[target_position][2] if this_square_is_valid else 'invalid_piece'
+        if(not this_square_is_valid):
             break
-        if(next_square_is_valid and len(target_piece)==0):
+        if(this_square_is_valid and len(target_piece)==0):
             bishop_threats.append(target_position)
             continue
-        if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] == color):
+        if(this_square_is_valid and len(target_piece) >= 1 and target_piece[0] == color):
             if(include_defended_squares):
                 bishop_threats.append(target_position)
             break
-        if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
+        if(this_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
             bishop_threats.append(target_position)
             break
 
@@ -312,19 +304,19 @@ def bishop_move_validity(current_position, current_board, include_defended_squar
     for dz_up_left in range(1,8):
         x_coord_up_left = normalized_arithmetic(color, "diff", x_coord, dz_up_left)
         y_coord_up_left = normalized_arithmetic(color, "sum", y_coord, dz_up_left)
-        next_square_is_valid = isValidBoardCoordinates(x_coord_up_left, y_coord_up_left)
-        target_position = inverted_squares_map[str(x_coord_up_left)+','+str(y_coord_up_left)] if next_square_is_valid else 'invalid_square'
-        target_piece = current_board[target_position][2] if next_square_is_valid else 'invalid_piece'
-        if(not next_square_is_valid):
+        this_square_is_valid = isValidBoardCoordinates(x_coord_up_left, y_coord_up_left)
+        target_position = inverted_squares_map[str(x_coord_up_left)+','+str(y_coord_up_left)] if this_square_is_valid else 'invalid_square'
+        target_piece = current_board[target_position][2] if this_square_is_valid else 'invalid_piece'
+        if(not this_square_is_valid):
             break
-        if(next_square_is_valid and len(target_piece)==0):
+        if(this_square_is_valid and len(target_piece)==0):
             bishop_threats.append(target_position)
             continue
-        if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] == color):
+        if(this_square_is_valid and len(target_piece) >= 1 and target_piece[0] == color):
             if(include_defended_squares):
                 bishop_threats.append(target_position)
             break
-        if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
+        if(this_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
             bishop_threats.append(target_position)
             break
 
@@ -332,19 +324,19 @@ def bishop_move_validity(current_position, current_board, include_defended_squar
     for dz_down_left in range(1,8):
         x_coord_down_left = normalized_arithmetic(color, "diff", x_coord, dz_down_left)
         y_coord_down_left = normalized_arithmetic(color, "diff", y_coord, dz_down_left)
-        next_square_is_valid = isValidBoardCoordinates(x_coord_down_left, y_coord_down_left)
-        target_position = inverted_squares_map[str(x_coord_down_left)+','+str(y_coord_down_left)] if next_square_is_valid else 'invalid_square'
-        target_piece = current_board[target_position][2] if next_square_is_valid else 'invalid_piece'
-        if(not next_square_is_valid):
+        this_square_is_valid = isValidBoardCoordinates(x_coord_down_left, y_coord_down_left)
+        target_position = inverted_squares_map[str(x_coord_down_left)+','+str(y_coord_down_left)] if this_square_is_valid else 'invalid_square'
+        target_piece = current_board[target_position][2] if this_square_is_valid else 'invalid_piece'
+        if(not this_square_is_valid):
             break
-        if(next_square_is_valid and len(target_piece)==0):
+        if(this_square_is_valid and len(target_piece)==0):
             bishop_threats.append(target_position)
             continue
-        if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] == color):
+        if(this_square_is_valid and len(target_piece) >= 1 and target_piece[0] == color):
             if(include_defended_squares):
                 bishop_threats.append(target_position)
             break
-        if(next_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
+        if(this_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
             bishop_threats.append(target_position)
             break
     return bishop_threats
@@ -546,12 +538,10 @@ sampleBoard = {"a1":[0,0,""],"b1":[1,0,"WQN"],"c1":[2,0,""],"d1":[3,0,""],"e1":[
 # print(pawn_move_validity('d2', sampleBoard)) #['d3', 'd4']
 # print(pawn_move_validity('a3', sampleBoard)) #['a4']
 # print(pawn_move_validity('c2', sampleBoard)) #['c3']
-print(knight_move_validity('f3', sampleBoard)) #['h4', 'g5', 'd4', 'e5', 'g1', 'e1']
-print(knight_move_validity('f6', sampleBoard)) #['e8', 'e4', 'h5', 'g4', 'g8']
-# print(rook_move_validity('c4', sampleBoard)) #['d4', 'b4', 'a4', 'c5', 'c6', 'c3']
-# print(rook_move_validity('c4', sampleBoard, True)) #['d4', 'e4', 'b4', 'a4', 'c5', 'c6', 'c3', 'c2']
-# print(rook_move_validity('g5', sampleBoard)) #['f5', 'e5', 'h5', 'g4', 'g6']
-# print(rook_move_validity('g5', sampleBoard, True)) #['f5', 'e5', 'd5', 'h5', 'g4', 'g6', 'g7']
+# print(knight_move_validity('f3', sampleBoard)) #['h4', 'g5', 'd4', 'e5', 'g1', 'e1']
+# print(knight_move_validity('f6', sampleBoard)) #['e8', 'e4', 'h5', 'g4', 'g8']
+print(rook_move_validity('c4', sampleBoard)) #['d4', 'b4', 'a4', 'c5', 'c6', 'c3']
+print(rook_move_validity('g5', sampleBoard)) #['f5', 'e5', 'h5', 'g4', 'g6']
 # print(bishop_move_validity('e6', sampleBoard)) #['f7', 'f5', 'd7', 'd5']
 # print(bishop_move_validity('d5', sampleBoard)) #['c4', 'c6', 'e4']
 # print(bishop_move_validity('e6', sampleBoard, True)) #['f7', 'f5', 'g4', 'd7', 'd5']
