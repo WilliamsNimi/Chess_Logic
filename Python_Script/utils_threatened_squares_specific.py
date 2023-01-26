@@ -286,7 +286,7 @@ def queen_threatened_squares(current_position, current_board):
     rook_threats = rook_threatened_squares(current_position, current_board)
     return bishop_threats + rook_threats
 
-def king_threatened_squares(current_position, current_board, include_defended_squares=False):
+def king_threatened_squares(current_position, current_board):
     """
     The king has 8 potentially valid destination squares it can attack.
     We'll check each of these to see if they're:
@@ -331,74 +331,28 @@ def king_threatened_squares(current_position, current_board, include_defended_sq
     left_90_degrees_target_position = inverted_squares_map[str(left_90_degrees_x_coord)+','+str(y_coord)] if left_90_degrees_is_valid else 'invalid_square'
     top_45_degrees_left_target_position = inverted_squares_map[str(top_45_degrees_x_coord)+','+str(top_45_degrees_y_coord)] if top_45_degrees_left_is_valid else 'invalid_square'
 
-    if(include_defended_squares):
-        if(top_90_degrees_is_valid):
-            king_threats.append(top_90_degrees_target_position)
-        if(top_45_degrees_right_is_valid):
-            king_threats.append(top_45_degrees_right_target_position)
-        if(right_90_degrees_is_valid):
-            king_threats.append(right_90_degrees_target_position)
-        if(bottom_45_degrees_right_is_valid):
-            king_threats.append(bottom_45_degrees_right_target_position)
-        if(bottom_90_degrees_is_valid):
-            king_threats.append(bottom_90_degrees_target_position)
-        if(bottom_45_degrees_left_is_valid):
-            king_threats.append(bottom_45_degrees_left_target_position)
-        if(left_90_degrees_is_valid):
-            king_threats.append(left_90_degrees_target_position)
-        if(top_45_degrees_left_is_valid):
-            king_threats.append(top_45_degrees_left_target_position)
-
-        return king_threats
-
-    #check which piece if any is occupying the potential target squares
-    top_90_degrees_target_piece = current_board[top_90_degrees_target_position][2] if top_90_degrees_is_valid else 'invalid_piece'
-    top_45_degrees_right_target_piece = current_board[top_45_degrees_right_target_position][2] if top_45_degrees_right_is_valid else 'invalid_piece'
-    right_90_degrees_target_piece = current_board[right_90_degrees_target_position][2] if right_90_degrees_is_valid else 'invalid_piece'
-    bottom_45_degrees_right_target_piece = current_board[bottom_45_degrees_right_target_position][2] if bottom_45_degrees_right_is_valid else 'invalid_piece'
-    bottom_90_degrees_target_piece = current_board[bottom_90_degrees_target_position][2] if bottom_90_degrees_is_valid else 'invalid_piece'
-    bottom_45_degrees_left_target_piece = current_board[bottom_45_degrees_left_target_position][2] if bottom_45_degrees_left_is_valid else 'invalid_piece'
-    left_90_degrees_target_piece = current_board[left_90_degrees_target_position][2] if left_90_degrees_is_valid else 'invalid_piece'
-    top_45_degrees_left_target_piece = current_board[top_45_degrees_left_target_position][2] if top_45_degrees_left_is_valid else 'invalid_piece'
-
-    if(top_90_degrees_is_valid and len(top_90_degrees_target_piece)==0):
-        king_threats.append(top_90_degrees_target_position)
-    if(top_90_degrees_is_valid and len(top_90_degrees_target_piece)>=1 and top_90_degrees_target_piece[0]!=color):
+    if(top_90_degrees_is_valid):
         king_threats.append(top_90_degrees_target_position)
 
-    if(top_45_degrees_right_is_valid and len(top_45_degrees_right_target_piece)==0):
-        king_threats.append(top_45_degrees_right_target_position)
-    if(top_45_degrees_right_is_valid and len(top_45_degrees_right_target_piece)>=1 and top_45_degrees_right_target_piece[0]!=color):
+    if(top_45_degrees_right_is_valid):
         king_threats.append(top_45_degrees_right_target_position)
 
-    if(right_90_degrees_is_valid and len(right_90_degrees_target_piece)==0):
-        king_threats.append(right_90_degrees_target_position)
-    if(right_90_degrees_is_valid and len(right_90_degrees_target_piece)>=1 and right_90_degrees_target_piece[0]!=color):
+    if(right_90_degrees_is_valid):
         king_threats.append(right_90_degrees_target_position)
 
-    if(bottom_45_degrees_right_is_valid and len(bottom_45_degrees_right_target_piece)==0):
-        king_threats.append(bottom_45_degrees_right_target_position)
-    if(bottom_45_degrees_right_is_valid and len(bottom_45_degrees_right_target_piece)>=1 and bottom_45_degrees_right_target_piece[0]!=color):
+    if(bottom_45_degrees_right_is_valid):
         king_threats.append(bottom_45_degrees_right_target_position)
 
-    if(bottom_90_degrees_is_valid and len(bottom_90_degrees_target_piece)==0):
-        king_threats.append(bottom_90_degrees_target_position)
-    if(bottom_90_degrees_is_valid and len(bottom_90_degrees_target_piece)>=1 and bottom_90_degrees_target_piece[0]!=color):
+    if(bottom_90_degrees_is_valid):
         king_threats.append(bottom_90_degrees_target_position)
 
-    if(bottom_45_degrees_left_is_valid and len(bottom_45_degrees_left_target_piece)==0):
-        king_threats.append(bottom_45_degrees_left_target_position)
-    if(bottom_45_degrees_left_is_valid and len(bottom_45_degrees_left_target_piece)>=1 and bottom_45_degrees_left_target_piece[0]!=color):
+    if(bottom_45_degrees_left_is_valid):
         king_threats.append(bottom_45_degrees_left_target_position)
 
-    if(left_90_degrees_is_valid and len(left_90_degrees_target_piece)==0):
-        king_threats.append(left_90_degrees_target_position)
-    if(left_90_degrees_is_valid and len(left_90_degrees_target_piece)>=1 and left_90_degrees_target_piece[0]!=color):
+    if(left_90_degrees_is_valid):
         king_threats.append(left_90_degrees_target_position)
 
-    if(top_45_degrees_left_is_valid and len(top_45_degrees_left_target_piece)==0):
-        king_threats.append(top_45_degrees_left_target_position)
-    if(top_45_degrees_left_is_valid and len(top_45_degrees_left_target_piece)>=1 and top_45_degrees_left_target_piece[0]!=color):
+    if(top_45_degrees_left_is_valid):
         king_threats.append(top_45_degrees_left_target_position)
     
     return king_threats
@@ -414,7 +368,7 @@ def extract_piece_name_and_color(piece):
   else:
     return {"name": piece[2].lower(), "color": piece[0].lower()}
 
-def unique(list_with_duplications):
+def deduplicate(list_with_duplications):
     return list(set(list_with_duplications))
 
 def all_threatened_and_defended_squares(current_board):
@@ -439,8 +393,8 @@ def all_threatened_and_defended_squares(current_board):
       piece_details = extract_piece_name_and_color(value[2])
       piece_threats = piece_mapping[piece_details["name"]](piece_position, current_board, True)
       all_threats[piece_details["color"]] += piece_threats
-  all_threats['w'] = unique(all_threats['w'])
-  all_threats['b'] = unique(all_threats['b'])
+  all_threats['w'] = deduplicate(all_threats['w'])
+  all_threats['b'] = deduplicate(all_threats['b'])
   return all_threats
 
 
@@ -477,12 +431,10 @@ sampleBoard = {"a1":[0,0,""],"b1":[1,0,"WQN"],"c1":[2,0,""],"d1":[3,0,""],"e1":[
 # print(rook_threatened_squares('g5', sampleBoard)) #['f5', 'e5', 'd5', 'h5', 'g4', 'g6', 'g7']
 # print(bishop_threatened_squares('e6', sampleBoard)) #['f7', 'f5', 'g4', 'd7', 'd5']
 # print(bishop_threatened_squares('d5', sampleBoard)) #['c4', 'c6', 'e4', 'e6']
-print(queen_threatened_squares('g4', sampleBoard)) #['h5', 'h3', 'f5', 'e6', 'f3', 'h4', 'f4', 'e4', 'g5', 'g3', 'g2']
-print(queen_threatened_squares('b5', sampleBoard)) #['a4', 'a6', 'c4', 'c6', 'a5', 'c5', 'd5', 'b4', 'b3', 'b2', 'b6', 'b7']
-# print(king_threatened_squares('e4', sampleBoard)) #['e5', 'f5', 'f4', 'e3', 'd3', 'd4', 'd5']
-# print(king_threatened_squares('c6', sampleBoard)) #['c5', 'b6', 'd6']
-# print(king_threatened_squares('e4', sampleBoard, True)) #['e5', 'f5', 'f4', 'e3', 'd3', 'd4', 'd5', 'f3']
-# print(king_threatened_squares('c6', sampleBoard, True)) #['e5', 'f5', 'f4', 'e3', 'd3', 'd4', 'd5', 'f3']
+# print(queen_threatened_squares('g4', sampleBoard)) #['h5', 'h3', 'f5', 'e6', 'f3', 'h4', 'f4', 'e4', 'g5', 'g3', 'g2']
+# print(queen_threatened_squares('b5', sampleBoard)) #['a4', 'a6', 'c4', 'c6', 'a5', 'c5', 'd5', 'b4', 'b3', 'b2', 'b6', 'b7']
+print(king_threatened_squares('e4', sampleBoard)) #['e5', 'f5', 'f4', 'e3', 'd3', 'd4', 'd5']
+print(king_threatened_squares('c6', sampleBoard)) #['c5', 'b5', 'b6', 'b7', 'c7', 'd7', 'd6', 'd5']
 # print(extract_piece_name_and_color("Bk"))
 
 # all_threatened = all_threatened_and_defended_squares(sampleBoard)
