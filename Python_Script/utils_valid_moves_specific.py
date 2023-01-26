@@ -324,7 +324,7 @@ def queen_move_validity(current_position, current_board):
     rook_threats = rook_move_validity(current_position, current_board)
     return bishop_threats + rook_threats
 
-def king_move_validity(current_position, current_board, include_defended_squares=False):
+def king_move_validity(current_position, current_board):
     """
     The king has 8 potentially valid destination squares it can attack.
     We'll check each of these to see if they're:
@@ -368,26 +368,6 @@ def king_move_validity(current_position, current_board, include_defended_squares
     bottom_45_degrees_left_target_position = inverted_squares_map[str(bottom_45_degrees_left_x_coord)+','+str(bottom_45_degrees_left_y_coord)] if bottom_45_degrees_left_is_valid else 'invalid_square'
     left_90_degrees_target_position = inverted_squares_map[str(left_90_degrees_x_coord)+','+str(y_coord)] if left_90_degrees_is_valid else 'invalid_square'
     top_45_degrees_left_target_position = inverted_squares_map[str(top_45_degrees_x_coord)+','+str(top_45_degrees_y_coord)] if top_45_degrees_left_is_valid else 'invalid_square'
-
-    if(include_defended_squares):
-        if(top_90_degrees_is_valid):
-            king_threats.append(top_90_degrees_target_position)
-        if(top_45_degrees_right_is_valid):
-            king_threats.append(top_45_degrees_right_target_position)
-        if(right_90_degrees_is_valid):
-            king_threats.append(right_90_degrees_target_position)
-        if(bottom_45_degrees_right_is_valid):
-            king_threats.append(bottom_45_degrees_right_target_position)
-        if(bottom_90_degrees_is_valid):
-            king_threats.append(bottom_90_degrees_target_position)
-        if(bottom_45_degrees_left_is_valid):
-            king_threats.append(bottom_45_degrees_left_target_position)
-        if(left_90_degrees_is_valid):
-            king_threats.append(left_90_degrees_target_position)
-        if(top_45_degrees_left_is_valid):
-            king_threats.append(top_45_degrees_left_target_position)
-
-        return king_threats
 
     #check which piece if any is occupying the potential target squares
     top_90_degrees_target_piece = current_board[top_90_degrees_target_position][2] if top_90_degrees_is_valid else 'invalid_piece'
@@ -516,12 +496,10 @@ sampleBoard = {"a1":[0,0,""],"b1":[1,0,"WQN"],"c1":[2,0,""],"d1":[3,0,""],"e1":[
 # print(rook_move_validity('g5', sampleBoard)) #['f5', 'e5', 'h5', 'g4', 'g6']
 # print(bishop_move_validity('e6', sampleBoard)) #['f7', 'f5', 'd7', 'd5']
 # print(bishop_move_validity('d5', sampleBoard)) #['c4', 'c6', 'e4']
-print(queen_move_validity('g4', sampleBoard)) #['h5', 'h3', 'f5', 'h4', 'f4', 'g5', 'g3']
-print(queen_move_validity('b5', sampleBoard)) #['a4', 'a6', 'c4', 'a5', 'c5', 'b4', 'b3', 'b2', 'b6']
-# print(king_move_validity('e4', sampleBoard)) #['e5', 'f5', 'f4', 'e3', 'd3', 'd4', 'd5']
-# print(king_move_validity('c6', sampleBoard)) #['c5', 'b6', 'd6']
-# print(king_move_validity('e4', sampleBoard, True)) #['e5', 'f5', 'f4', 'e3', 'd3', 'd4', 'd5', 'f3']
-# print(king_move_validity('c6', sampleBoard, True)) #['e5', 'f5', 'f4', 'e3', 'd3', 'd4', 'd5', 'f3']
+# print(queen_move_validity('g4', sampleBoard)) #['h5', 'h3', 'f5', 'h4', 'f4', 'g5', 'g3']
+# print(queen_move_validity('b5', sampleBoard)) #['a4', 'a6', 'c4', 'a5', 'c5', 'b4', 'b3', 'b2', 'b6']
+print(king_move_validity('e4', sampleBoard)) #['e5', 'f5', 'f4', 'e3', 'd3', 'd4', 'd5']
+print(king_move_validity('c6', sampleBoard)) #['c5', 'b6', 'd6']
 # print(extract_piece_name_and_color("Bk"))
 
 # all_threatened = all_threatened_and_defended_squares(sampleBoard)
