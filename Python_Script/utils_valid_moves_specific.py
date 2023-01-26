@@ -314,15 +314,14 @@ def bishop_move_validity(current_position, current_board):
             break
     return bishop_threats
 
-def queen_move_validity(current_position, current_board, include_defended_squares=False):
+def queen_move_validity(current_position, current_board):
 
     """
     A Queen combines the moves of both the Bishop and Rook.
     We'll simply call the existing functions and combine their results
     """
-    defended_squares_flag = include_defended_squares
-    bishop_threats = bishop_move_validity(current_position, current_board, defended_squares_flag)
-    rook_threats = rook_move_validity(current_position, current_board, defended_squares_flag)
+    bishop_threats = bishop_move_validity(current_position, current_board)
+    rook_threats = rook_move_validity(current_position, current_board)
     return bishop_threats + rook_threats
 
 def king_move_validity(current_position, current_board, include_defended_squares=False):
@@ -515,12 +514,10 @@ sampleBoard = {"a1":[0,0,""],"b1":[1,0,"WQN"],"c1":[2,0,""],"d1":[3,0,""],"e1":[
 # print(knight_move_validity('f6', sampleBoard)) #['e8', 'e4', 'h5', 'g4', 'g8']
 # print(rook_move_validity('c4', sampleBoard)) #['d4', 'b4', 'a4', 'c5', 'c6', 'c3']
 # print(rook_move_validity('g5', sampleBoard)) #['f5', 'e5', 'h5', 'g4', 'g6']
-print(bishop_move_validity('e6', sampleBoard)) #['f7', 'f5', 'd7', 'd5']
-print(bishop_move_validity('d5', sampleBoard)) #['c4', 'c6', 'e4']
-# print(queen_move_validity('g4', sampleBoard)) #['h5', 'h3', 'f5', 'h4', 'f4', 'g5', 'g3']
-# print(queen_move_validity('b5', sampleBoard)) #['a4', 'a6', 'c4', 'a5', 'c5', 'b4', 'b3', 'b2', 'b6']
-# print(queen_move_validity('g4', sampleBoard, True)) #['h5', 'h3', 'f5', 'e6', 'f3', 'h4', 'f4', 'e4', 'g5', 'g3', 'g2']
-# print(queen_move_validity('b5', sampleBoard, True)) #['a4', 'a6', 'c4', 'c6', 'a5', 'c5', 'd5', 'b4', 'b3', 'b2', 'b6', 'b7']
+# print(bishop_move_validity('e6', sampleBoard)) #['f7', 'f5', 'd7', 'd5']
+# print(bishop_move_validity('d5', sampleBoard)) #['c4', 'c6', 'e4']
+print(queen_move_validity('g4', sampleBoard)) #['h5', 'h3', 'f5', 'h4', 'f4', 'g5', 'g3']
+print(queen_move_validity('b5', sampleBoard)) #['a4', 'a6', 'c4', 'a5', 'c5', 'b4', 'b3', 'b2', 'b6']
 # print(king_move_validity('e4', sampleBoard)) #['e5', 'f5', 'f4', 'e3', 'd3', 'd4', 'd5']
 # print(king_move_validity('c6', sampleBoard)) #['c5', 'b6', 'd6']
 # print(king_move_validity('e4', sampleBoard, True)) #['e5', 'f5', 'f4', 'e3', 'd3', 'd4', 'd5', 'f3']
