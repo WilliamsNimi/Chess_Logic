@@ -371,11 +371,12 @@ def extract_piece_name_and_color(piece):
 def deduplicate(list_with_duplications):
     return list(set(list_with_duplications))
 
-def all_threatened_and_defended_squares(current_board):
+def all_threatened_and_defended_squares(current_board, king_color):
   """
   This function returns a dictionary of all the threatened squares separated by color given the current state of the board.
-  Note that the list referenced by index W refers to all black squares threatened by white pieces
-  and the list referenced by index B refers to all white squares threatened by black pieces
+  *args: current_board is the current board dictioary
+         king_color should be either the string 'w' or 'b' to indicate the color of the king for which threatened squares
+         are being checked
   """
   piece_mapping = {
     "p": pawn_threatened_squares,
@@ -386,39 +387,38 @@ def all_threatened_and_defended_squares(current_board):
     "k": king_threatened_squares,
   }
 
-  all_threats = {"w": [], "b": []}
+  all_threats = []
 
   for(piece_position, value) in current_board.items():
     if(len(value[2]))>0:
       piece_details = extract_piece_name_and_color(value[2])
-      piece_threats = piece_mapping[piece_details["name"]](piece_position, current_board, True)
-      all_threats[piece_details["color"]] += piece_threats
-  all_threats['w'] = deduplicate(all_threats['w'])
-  all_threats['b'] = deduplicate(all_threats['b'])
-  return all_threats
+      piece_threats = piece_mapping[piece_details["name"]](piece_position, current_board)
+      if(piece_details["color"]!=king_color.lower()):
+          all_threats += piece_threats
+  return deduplicate(all_threats)
 
 
 
 
 ### Tests
 
-sampleBoard = {"a1":[0,0,""],"b1":[1,0,"WQN"],"c1":[2,0,""],"d1":[3,0,""],"e1":[4,0,""], "f1":[5,0,"WKB"], "g1":[6,0,""], "h1":[7,0,"WKR"], 
+# sampleBoard = {"a1":[0,0,""],"b1":[1,0,"WQN"],"c1":[2,0,""],"d1":[3,0,""],"e1":[4,0,""], "f1":[5,0,"WKB"], "g1":[6,0,""], "h1":[7,0,"WKR"], 
          
-"a2":[0,1,""],"b2":[1,1,"Wp2"],"c2":[2,1,"Wp3"],"d2":[3,1,"Wp4"],"e2":[4,1,"Wp5"], "f2":[5,1,"Wp6"], "g2":[6,1,"Wp7"], "h2":[7,1,"Wp8"],
+# "a2":[0,1,""],"b2":[1,1,"Wp2"],"c2":[2,1,"Wp3"],"d2":[3,1,"Wp4"],"e2":[4,1,"Wp5"], "f2":[5,1,"Wp6"], "g2":[6,1,"Wp7"], "h2":[7,1,"Wp8"],
          
-"a3":[0,2,"Wp1"],"b3":[1,2,""],"c3":[2,2,""],"d3":[3,2,""],"e3":[4,2,""], "f3":[5,2,"WKN"], "g3":[6,2,""], "h3":[7,2,""],
+# "a3":[0,2,"Wp1"],"b3":[1,2,""],"c3":[2,2,""],"d3":[3,2,""],"e3":[4,2,""], "f3":[5,2,"WKN"], "g3":[6,2,""], "h3":[7,2,""],
 
-"a4":[0,3,""],"b4":[1,3,""],"c4":[2,3,"WQR"],"d4":[3,3,""],"e4":[4,3,"WK"], "f4":[5,3,""], "g4":[6,3,"WQ"], "h4":[7,3,""],  
+# "a4":[0,3,""],"b4":[1,3,""],"c4":[2,3,"WQR"],"d4":[3,3,""],"e4":[4,3,"WK"], "f4":[5,3,""], "g4":[6,3,"WQ"], "h4":[7,3,""],  
 
-"a5":[0,4,""],"b5":[1,4,"BQ"],"c5":[2,4,""],"d5":[3,4,"BQB"],"e5":[4,4,""], "f5":[5,4,""], "g5":[6,4,"BKR"], "h5":[7,4,""],
+# "a5":[0,4,""],"b5":[1,4,"BQ"],"c5":[2,4,""],"d5":[3,4,"BQB"],"e5":[4,4,""], "f5":[5,4,""], "g5":[6,4,"BKR"], "h5":[7,4,""],
 
-"a6":[0,5,""],"b6":[1,5,""],"c6":[2,5,"BK"],"d6":[3,5,""],"e6":[4,5,"WQB"], "f6":[5,5,"BKN"], "g6":[6,5,""], "h6":[7,5,""],
+# "a6":[0,5,""],"b6":[1,5,""],"c6":[2,5,"BK"],"d6":[3,5,""],"e6":[4,5,"WQB"], "f6":[5,5,"BKN"], "g6":[6,5,""], "h6":[7,5,""],
 
-"a7":[0,6,"Bp8"],"b7":[1,6,"Bp7"],"c7":[2,6,"Bp6"],"d7":[3,6,"Bp5"],"e7":[4,6,"Bp4"], "f7":[5,6,"Bp3"], "g7":[6,6,"Bp2"], "h7":[7,6,"Bp1"], 
+# "a7":[0,6,"Bp8"],"b7":[1,6,"Bp7"],"c7":[2,6,"Bp6"],"d7":[3,6,"Bp5"],"e7":[4,6,"Bp4"], "f7":[5,6,"Bp3"], "g7":[6,6,"Bp2"], "h7":[7,6,"Bp1"], 
 
-"a8":[0,7,"BQR"],"b8":[1,7,"BQN"],"c8":[2,7,""],"d8":[3,7,""],"e8":[4,7,""], "f8":[5,7,"BKB"], "g8":[6,7,""], "h8":[7,7,""]
+# "a8":[0,7,"BQR"],"b8":[1,7,"BQN"],"c8":[2,7,""],"d8":[3,7,""],"e8":[4,7,""], "f8":[5,7,"BKB"], "g8":[6,7,""], "h8":[7,7,""]
          
-         }
+#          }
 
 # print(pawn_threatened_squares('e7', sampleBoard)) #['d6', 'f6']
 # print(pawn_threatened_squares('d7', sampleBoard)) #['e6', 'c6']
@@ -433,9 +433,8 @@ sampleBoard = {"a1":[0,0,""],"b1":[1,0,"WQN"],"c1":[2,0,""],"d1":[3,0,""],"e1":[
 # print(bishop_threatened_squares('d5', sampleBoard)) #['c4', 'c6', 'e4', 'e6']
 # print(queen_threatened_squares('g4', sampleBoard)) #['h5', 'h3', 'f5', 'e6', 'f3', 'h4', 'f4', 'e4', 'g5', 'g3', 'g2']
 # print(queen_threatened_squares('b5', sampleBoard)) #['a4', 'a6', 'c4', 'c6', 'a5', 'c5', 'd5', 'b4', 'b3', 'b2', 'b6', 'b7']
-print(king_threatened_squares('e4', sampleBoard)) #['e5', 'f5', 'f4', 'e3', 'd3', 'd4', 'd5']
-print(king_threatened_squares('c6', sampleBoard)) #['c5', 'b5', 'b6', 'b7', 'c7', 'd7', 'd6', 'd5']
+# print(king_threatened_squares('e4', sampleBoard)) #['e5', 'f5', 'f4', 'e3', 'd3', 'd4', 'd5']
+# print(king_threatened_squares('c6', sampleBoard)) #['c5', 'b5', 'b6', 'b7', 'c7', 'd7', 'd6', 'd5']
 # print(extract_piece_name_and_color("Bk"))
 
-# all_threatened = all_threatened_and_defended_squares(sampleBoard)
-# print(len(all_threatened['w']), len(all_threatened['b']))
+# print(all_threatened_and_defended_squares(sampleBoard, 'w'))
