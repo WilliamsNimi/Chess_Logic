@@ -68,7 +68,7 @@ def pawn_move_validity(current_position, current_board):
 
     return pawn_threats
 
-def knight_move_validity(current_position, current_board, include_defended_squares=False):
+def knight_move_validity(current_position, current_board):
     """
     The knight has 8 potentially valid destination squares it can attack.
     We'll check each of these to see if they're:
@@ -166,24 +166,6 @@ def knight_move_validity(current_position, current_board, include_defended_squar
         knight_threats.append(bottom_far_left_target_position)
     if(bottom_far_left_square_is_valid and len(bottom_far_left_target_piece)>=1 and bottom_far_left_target_piece[0]!=color):
         knight_threats.append(bottom_far_left_target_position)
-
-    if(include_defended_squares):
-        if(top_near_left_square_is_valid and len(top_near_left_target_piece)>=1 and top_near_left_target_piece[0]==color):
-            knight_threats.append(top_near_left_target_position)
-        if(top_far_right_square_is_valid and len(top_far_right_target_piece)>=1 and top_far_right_target_piece[0]==color):
-            knight_threats.append(top_far_right_target_position)
-        if(top_near_left_square_is_valid and len(top_near_left_target_piece)>=1 and top_near_left_target_piece[0]==color):
-            knight_threats.append(top_near_left_target_position)
-        if(top_far_left_square_is_valid and len(top_far_left_target_piece)>=1 and top_far_left_target_piece[0]==color):
-            knight_threats.append(top_far_left_target_position)
-        if(bottom_near_right_square_is_valid and len(bottom_near_right_target_piece)>=1 and bottom_near_right_target_piece[0]==color):
-            knight_threats.append(bottom_near_right_target_position)
-        if(bottom_far_right_square_is_valid and len(bottom_far_right_target_piece)>=1 and bottom_far_right_target_piece[0]==color):
-            knight_threats.append(bottom_far_right_target_position)
-        if(bottom_near_left_square_is_valid and len(bottom_near_left_target_piece)>=1 and bottom_near_left_target_piece[0]==color):
-            knight_threats.append(bottom_near_left_target_position)
-        if(bottom_far_left_square_is_valid and len(bottom_far_left_target_piece)>=1 and bottom_far_left_target_piece[0]==color):
-            knight_threats.append(bottom_far_left_target_position)
     
     return knight_threats
 
@@ -564,9 +546,8 @@ sampleBoard = {"a1":[0,0,""],"b1":[1,0,"WQN"],"c1":[2,0,""],"d1":[3,0,""],"e1":[
 # print(pawn_move_validity('d2', sampleBoard)) #['d3', 'd4']
 # print(pawn_move_validity('a3', sampleBoard)) #['a4']
 # print(pawn_move_validity('c2', sampleBoard)) #['c3']
-# print(knight_move_validity('f3', sampleBoard)) #['h4', 'g5', 'd4', 'e5', 'g1', 'e1']
-# print(knight_move_validity('f6', sampleBoard)) #['d5', 'e4', 'h5', 'g4', 'g8']
-# print(knight_move_validity('f3', sampleBoard, True)) #['h4', 'g5', 'd4', 'e5', 'g1', 'e1', 'h2', 'd2']
+print(knight_move_validity('f3', sampleBoard)) #['h4', 'g5', 'd4', 'e5', 'g1', 'e1']
+print(knight_move_validity('f6', sampleBoard)) #['e8', 'e4', 'h5', 'g4', 'g8']
 # print(rook_move_validity('c4', sampleBoard)) #['d4', 'b4', 'a4', 'c5', 'c6', 'c3']
 # print(rook_move_validity('c4', sampleBoard, True)) #['d4', 'e4', 'b4', 'a4', 'c5', 'c6', 'c3', 'c2']
 # print(rook_move_validity('g5', sampleBoard)) #['f5', 'e5', 'h5', 'g4', 'g6']
