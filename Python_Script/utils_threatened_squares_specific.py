@@ -52,7 +52,7 @@ def pawn_threatened_squares(current_position, current_board):
 
     return pawn_threats
 
-def knight_threatened_squares(current_position, current_board, include_defended_squares=False):
+def knight_threatened_squares(current_position, current_board):
     """
     The knight has 8 potentially valid destination squares it can attack.
     We'll check each of these to see if they're:
@@ -200,7 +200,7 @@ def rook_threatened_squares(current_position, current_board):
             break
     return rook_threats
 
-def bishop_threatened_squares(current_position, current_board, include_defended_squares=False):
+def bishop_threatened_squares(current_position, current_board):
     """
     A Bishop can potentially attack in 4 diagonal directions (z_up_right(1:15 on a clock), z_down_right(4:15 on a clock), 
     z_up_left(10:15 on a clock), z_down_left(7:15 on a clock)).
@@ -223,11 +223,7 @@ def bishop_threatened_squares(current_position, current_board, include_defended_
         if(this_square_is_valid and len(target_piece)==0):
             bishop_threats.append(target_position)
             continue
-        if(this_square_is_valid and len(target_piece) >= 1 and target_piece[0] == color):
-            if(include_defended_squares):
-                bishop_threats.append(target_position)
-            break
-        if(this_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
+        if(this_square_is_valid and len(target_piece) >= 1):
             bishop_threats.append(target_position)
             break
     
@@ -243,11 +239,7 @@ def bishop_threatened_squares(current_position, current_board, include_defended_
         if(this_square_is_valid and len(target_piece)==0):
             bishop_threats.append(target_position)
             continue
-        if(this_square_is_valid and len(target_piece) >= 1 and target_piece[0] == color):
-            if(include_defended_squares):
-                bishop_threats.append(target_position)
-            break
-        if(this_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
+        if(this_square_is_valid and len(target_piece) >= 1):
             bishop_threats.append(target_position)
             break
 
@@ -263,11 +255,7 @@ def bishop_threatened_squares(current_position, current_board, include_defended_
         if(this_square_is_valid and len(target_piece)==0):
             bishop_threats.append(target_position)
             continue
-        if(this_square_is_valid and len(target_piece) >= 1 and target_piece[0] == color):
-            if(include_defended_squares):
-                bishop_threats.append(target_position)
-            break
-        if(this_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
+        if(this_square_is_valid and len(target_piece) >= 1):
             bishop_threats.append(target_position)
             break
 
@@ -283,11 +271,7 @@ def bishop_threatened_squares(current_position, current_board, include_defended_
         if(this_square_is_valid and len(target_piece)==0):
             bishop_threats.append(target_position)
             continue
-        if(this_square_is_valid and len(target_piece) >= 1 and target_piece[0] == color):
-            if(include_defended_squares):
-                bishop_threats.append(target_position)
-            break
-        if(this_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
+        if(this_square_is_valid and len(target_piece) >= 1):
             bishop_threats.append(target_position)
             break
     return bishop_threats
@@ -483,19 +467,17 @@ sampleBoard = {"a1":[0,0,""],"b1":[1,0,"WQN"],"c1":[2,0,""],"d1":[3,0,""],"e1":[
          
          }
 
-print(pawn_threatened_squares('e7', sampleBoard)) #['d6', 'f6']
-print(pawn_threatened_squares('d7', sampleBoard)) #['e6', 'c6']
-print(pawn_threatened_squares('d2', sampleBoard)) #['e3', 'c3']
-print(pawn_threatened_squares('a3', sampleBoard)) #['b4']
-print(pawn_threatened_squares('c2', sampleBoard)) #['d3', 'b3']
-print(knight_threatened_squares('f3', sampleBoard)) #['h4', 'g5', 'd4', 'e5', 'h2', 'g1', 'd2', 'e1']
-print(knight_threatened_squares('f6', sampleBoard)) #['d5', 'e4', 'h5', 'g4', 'd7', 'e8', 'h7', 'g8']
-print(rook_threatened_squares('c4', sampleBoard)) #['d4', 'e4', 'b4', 'a4', 'c5', 'c6', 'c3', 'c2']
-print(rook_threatened_squares('g5', sampleBoard)) #['f5', 'e5', 'd5', 'h5', 'g4', 'g6', 'g7']
-# print(bishop_threatened_squares('e6', sampleBoard)) #['f7', 'f5', 'd7', 'd5']
-# print(bishop_threatened_squares('d5', sampleBoard)) #['c4', 'c6', 'e4']
-# print(bishop_threatened_squares('e6', sampleBoard, True)) #['f7', 'f5', 'g4', 'd7', 'd5']
-# print(bishop_threatened_squares('d5', sampleBoard, True)) #['c4', 'c6', 'e4', 'e6']
+# print(pawn_threatened_squares('e7', sampleBoard)) #['d6', 'f6']
+# print(pawn_threatened_squares('d7', sampleBoard)) #['e6', 'c6']
+# print(pawn_threatened_squares('d2', sampleBoard)) #['e3', 'c3']
+# print(pawn_threatened_squares('a3', sampleBoard)) #['b4']
+# print(pawn_threatened_squares('c2', sampleBoard)) #['d3', 'b3']
+# print(knight_threatened_squares('f3', sampleBoard)) #['h4', 'g5', 'd4', 'e5', 'h2', 'g1', 'd2', 'e1']
+# print(knight_threatened_squares('f6', sampleBoard)) #['d5', 'e4', 'h5', 'g4', 'd7', 'e8', 'h7', 'g8']
+# print(rook_threatened_squares('c4', sampleBoard)) #['d4', 'e4', 'b4', 'a4', 'c5', 'c6', 'c3', 'c2']
+# print(rook_threatened_squares('g5', sampleBoard)) #['f5', 'e5', 'd5', 'h5', 'g4', 'g6', 'g7']
+print(bishop_threatened_squares('e6', sampleBoard)) #['f7', 'f5', 'g4', 'd7', 'd5']
+print(bishop_threatened_squares('d5', sampleBoard)) #['c4', 'c6', 'e4', 'e6']
 # print(queen_threatened_squares('g4', sampleBoard)) #['h5', 'h3', 'f5', 'h4', 'f4', 'g5', 'g3']
 # print(queen_threatened_squares('b5', sampleBoard)) #['a4', 'a6', 'c4', 'a5', 'c5', 'b4', 'b3', 'b2', 'b6']
 # print(queen_threatened_squares('g4', sampleBoard, True)) #['h5', 'h3', 'f5', 'e6', 'f3', 'h4', 'f4', 'e4', 'g5', 'g3', 'g2']
