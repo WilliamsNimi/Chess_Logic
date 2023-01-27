@@ -390,11 +390,11 @@ def all_threatened_and_defended_squares(current_board, king_color):
   all_threats = []
 
   for(piece_position, value) in current_board.items():
-    if(len(value[2]))>0:
-      piece_details = extract_piece_name_and_color(value[2])
-      piece_threats = piece_mapping[piece_details["name"]](piece_position, current_board)
-      if(piece_details["color"]!=king_color.lower()):
-          all_threats += piece_threats
+      if(len(value[2])>0):
+          piece_details = extract_piece_name_and_color(value[2])
+          if(piece_details["color"]!=king_color.lower()):
+              piece_threats = piece_mapping[piece_details["name"]](piece_position, current_board)
+              all_threats += piece_threats
   return deduplicate(all_threats)
 
 
