@@ -199,3 +199,28 @@ def threatened_squares_king(King, Board, squares):
                         king_threatened_squares.append(square_key)
 
     return (king_threatened_squares)
+
+def get_all_threatened_squares(Board, squares):
+###
+    # get_all_threatened_squares- This function aims to get the squares threatened by all pieces
+    # Description: This function gets all the squares threatened by every piece on the board
+    # @Board: This is the Board it examines to find threats
+    # @squares: This is the list of standard chess squares it needs to pass to the individual piece functions checking for threats
+    # Return: Returns a list of all squares threatened by all pieces
+    ###
+    all_threatened_squares = {}
+    for key, values in Board.items():
+        if (values[2] != ""):
+            if (values[2] == "WQ" or values[2] == "BQ"):
+                all_threatened_squares[values[2]] = threatened_squares_queen(values[2], Board, squares)
+            elif (values[2] == "BK" or values[2] == "WK"):
+                all_threatened_squares[values[2]] = threatened_squares_king(values[2], Board, squares)
+            elif (values[2][1] == "p"):
+                all_threatened_squares[values[2]] = threatened_squares_pawn(values[2], Board, squares)
+            elif (values[2][2] == "N"):
+                all_threatened_squares[values[2]] = threatened_squares_knight(values[2], Board, squares)
+            elif (values[2][2] == "B"):
+                all_threatened_squares[values[2]] = threatened_squares_bishop(values[2], Board, squares)
+            elif (values[2][2] == "R"):
+                all_threatened_squares[values[2]] = threatened_squares_rook(values[2], Board, squares)
+    return (all_threatened_squares)

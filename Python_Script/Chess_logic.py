@@ -261,30 +261,6 @@ def move_validity_king(move):
             if(((y_coord - value[1]) == 1 and (x_coord - value[0]) == 0) or ((y_coord - value[1]) == -1 and (x_coord - value[0]) == 0) or ((x_coord - value[0]) == 1 and (y_coord - value[1]) == 0) or ((x_coord -  value[0]) == 1 and (y_coord - value[1]) == -1) or ((x_coord - value[0]) == -1 and (y_coord - value[1]) == -1) or ((x_coord - value[0]) == -1 and (y_coord - value[1]) == 0) or ((x_coord - value[0]) == -1 and (y_coord - value[1]) == 1) or ((x_coord - value[0]) == 1 and (y_coord - value[1]) == 1)):
                 return True
 
-def get_all_threatened_squares(Board, squares):
-    ###
-    # get_all_threatened_squares- This function aims to get the squares threatened by all pieces
-    # Description: This function gets all the squares threatened by every piece on the board
-    # @Board: This is the Board it examines to find threats
-    # @squares: This is the list of standard chess squares it needs to pass to the individual piece functions checking for threats
-    # Return: Returns a list of all squares threatened by all pieces
-    ###
-    for key, values in Board.items():
-        if (values[2] != ""):
-            if (values[2] == "WQ" or values[2] == "BQ"):
-                all_threatened_squares[values[2]] = utils2.threatened_squares_queen(values[2], Board, squares)
-            elif (values[2] == "BK" or values[2] == "WK"):
-                all_threatened_squares[values[2]] = utils2.threatened_squares_king(values[2], Board, squares)
-            elif (values[2][1] == "p"):
-                all_threatened_squares[values[2]] = utils2.threatened_squares_pawn(values[2], Board, squares)
-            elif (values[2][2] == "N"):
-                all_threatened_squares[values[2]] = utils2.threatened_squares_knight(values[2], Board, squares)
-            elif (values[2][2] == "B"):
-                all_threatened_squares[values[2]] = utils2.threatened_squares_bishop(values[2], Board, squares)
-            elif (values[2][2] == "R"):
-                all_threatened_squares[values[2]] = utils2.threatened_squares_rook(values[2], Board, squares)
-    return (all_threatened_squares)
-
 def get_squares_threatened_by_black(all_threatened_squares):
     ###
     # get_squares_threatened_by_black- This function aims to get the squares threatened by all black pieces
@@ -325,9 +301,9 @@ def make_move(validCheck, move):
         Board[move[1]][2] = move[0]
         Board[move[2]][2] = ""
         move_successful = True
-        print(get_all_threatened_squares(Board, squares))
-        print(get_squares_threatened_by_white(get_all_threatened_squares(Board, squares)))
-        print(get_squares_threatened_by_black(get_all_threatened_squares(Board, squares)))
+        print(utils2.get_all_threatened_squares(Board, squares))
+        print(get_squares_threatened_by_white(utils2.get_all_threatened_squares(Board, squares)))
+        print(get_squares_threatened_by_black(utils2.get_all_threatened_squares(Board, squares)))
 
     else:
         move_successful = False
