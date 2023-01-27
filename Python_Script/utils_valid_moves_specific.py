@@ -7,7 +7,7 @@ TO-DO:
 squares = {"a1":(0,0),"b1":(1,0),"c1":(2,0),"d1":(3,0),"e1":(4,0),"f1":(5,0),"g1":(6,0),"h1":(7,0),"a2":(0,1),"b2":(1,1),"c2":(2,1),"d2":(3,1),"e2":(4,1),"f2":(5,1),"g2":(6,1),"h2":(7,1),"a3":(0,2),"b3":(1,2),"c3":(2,2),"d3":(3,2),"e3":(4,2),"f3":(5,2),"g3":(6,2),"h3":(7,2),"a4":(0,3),"b4":(1,3),"c4":(2,3),"d4":(3,3),"e4":(4,3),"f4":(5,3),"g4":(6,3),"h4":(7,3),"a5":(0,4),"b5":(1,4),"c5":(2,4),"d5":(3,4),"e5":(4,4),"f5":(5,4),"g5":(6,4),"h5":(7,4),"a6":(0,5),"b6":(1,5),"c6":(2,5),"d6":(3,5),"e6":(4,5),"f6":(5,5),"g6":(6,5),"h6":(7,5),"a7":(0,6),"b7":(1,6),"c7":(2,6),"d7":(3,6),"e7":(4,6),"f7":(5,6),"g7":(6,6),"h7":(7,6),"a8":(0,7),"b8":(1,7),"c8":(2,7),"d8":(3,7),"e8":(4,7),"f8":(5,7),"g8":(6,7),"h8":(7,7)}
 inverted_squares_map = {'0,0': 'a1', '1,0': 'b1', '2,0': 'c1', '3,0': 'd1', '4,0': 'e1', '5,0': 'f1', '6,0': 'g1', '7,0': 'h1', '0,1': 'a2', '1,1': 'b2', '2,1': 'c2', '3,1': 'd2', '4,1': 'e2', '5,1': 'f2', '6,1': 'g2', '7,1': 'h2', '0,2': 'a3', '1,2': 'b3', '2,2': 'c3', '3,2': 'd3', '4,2': 'e3', '5,2': 'f3', '6,2': 'g3', '7,2': 'h3', '0,3': 'a4', '1,3': 'b4', '2,3': 'c4', '3,3': 'd4', '4,3': 'e4', '5,3': 'f4', '6,3': 'g4', '7,3': 'h4', '0,4': 'a5', '1,4': 'b5', '2,4': 'c5', '3,4': 'd5', '4,4': 'e5', '5,4': 'f5', '6,4': 'g5', '7,4': 'h5', '0,5': 'a6', '1,5': 'b6', '2,5': 'c6', '3,5': 'd6', '4,5': 'e6', '5,5': 'f6', '6,5': 'g6', '7,5': 'h6', '0,6': 'a7', '1,6': 'b7', '2,6': 'c7', '3,6': 'd7', '4,6': 'e7', '5,6': 'f7', '6,6': 'g7', '7,6': 'h7', '0,7': 'a8', '1,7': 'b8', '2,7': 'c8', '3,7': 'd8', '4,7': 'e8', '5,7': 'f8', '6,7': 'g8', '7,7': 'h8'}
 
-from utils_threatened_squares_specific import normalized_arithmetic, isValidBoardCoordinates
+from utils_threatened_squares_specific import *
 
 def pawn_move_validity(current_position, current_board):
     pawn_threats = []
@@ -379,45 +379,55 @@ def king_move_validity(current_position, current_board):
     left_90_degrees_target_piece = current_board[left_90_degrees_target_position][2] if left_90_degrees_is_valid else 'invalid_piece'
     top_45_degrees_left_target_piece = current_board[top_45_degrees_left_target_position][2] if top_45_degrees_left_is_valid else 'invalid_piece'
 
-    if(top_90_degrees_is_valid and len(top_90_degrees_target_piece)==0):
-        king_threats.append(top_90_degrees_target_position)
-    if(top_90_degrees_is_valid and len(top_90_degrees_target_piece)>=1 and top_90_degrees_target_piece[0]!=color):
-        king_threats.append(top_90_degrees_target_position)
+    forbidden_squares = all_threatened_and_defended_squares(current_board, color)
 
-    if(top_45_degrees_right_is_valid and len(top_45_degrees_right_target_piece)==0):
-        king_threats.append(top_45_degrees_right_target_position)
-    if(top_45_degrees_right_is_valid and len(top_45_degrees_right_target_piece)>=1 and top_45_degrees_right_target_piece[0]!=color):
-        king_threats.append(top_45_degrees_right_target_position)
+    if(top_90_degrees_target_position not in forbidden_squares):
+        if(top_90_degrees_is_valid and len(top_90_degrees_target_piece)==0):
+            king_threats.append(top_90_degrees_target_position)
+        if(top_90_degrees_is_valid and len(top_90_degrees_target_piece)>=1 and top_90_degrees_target_piece[0]!=color):
+            king_threats.append(top_90_degrees_target_position)
 
-    if(right_90_degrees_is_valid and len(right_90_degrees_target_piece)==0):
-        king_threats.append(right_90_degrees_target_position)
-    if(right_90_degrees_is_valid and len(right_90_degrees_target_piece)>=1 and right_90_degrees_target_piece[0]!=color):
-        king_threats.append(right_90_degrees_target_position)
+    if(top_45_degrees_right_target_position not in forbidden_squares):
+        if(top_45_degrees_right_is_valid and len(top_45_degrees_right_target_piece)==0):
+            king_threats.append(top_45_degrees_right_target_position)
+        if(top_45_degrees_right_is_valid and len(top_45_degrees_right_target_piece)>=1 and top_45_degrees_right_target_piece[0]!=color):
+            king_threats.append(top_45_degrees_right_target_position)
 
-    if(bottom_45_degrees_right_is_valid and len(bottom_45_degrees_right_target_piece)==0):
-        king_threats.append(bottom_45_degrees_right_target_position)
-    if(bottom_45_degrees_right_is_valid and len(bottom_45_degrees_right_target_piece)>=1 and bottom_45_degrees_right_target_piece[0]!=color):
-        king_threats.append(bottom_45_degrees_right_target_position)
+    if(right_90_degrees_target_position not in forbidden_squares):
+        if(right_90_degrees_is_valid and len(right_90_degrees_target_piece)==0):
+            king_threats.append(right_90_degrees_target_position)
+        if(right_90_degrees_is_valid and len(right_90_degrees_target_piece)>=1 and right_90_degrees_target_piece[0]!=color):
+            king_threats.append(right_90_degrees_target_position)
 
-    if(bottom_90_degrees_is_valid and len(bottom_90_degrees_target_piece)==0):
-        king_threats.append(bottom_90_degrees_target_position)
-    if(bottom_90_degrees_is_valid and len(bottom_90_degrees_target_piece)>=1 and bottom_90_degrees_target_piece[0]!=color):
-        king_threats.append(bottom_90_degrees_target_position)
+    if(bottom_45_degrees_right_target_position not in forbidden_squares):
+        if(bottom_45_degrees_right_is_valid and len(bottom_45_degrees_right_target_piece)==0):
+            king_threats.append(bottom_45_degrees_right_target_position)
+        if(bottom_45_degrees_right_is_valid and len(bottom_45_degrees_right_target_piece)>=1 and bottom_45_degrees_right_target_piece[0]!=color):
+            king_threats.append(bottom_45_degrees_right_target_position)
 
-    if(bottom_45_degrees_left_is_valid and len(bottom_45_degrees_left_target_piece)==0):
-        king_threats.append(bottom_45_degrees_left_target_position)
-    if(bottom_45_degrees_left_is_valid and len(bottom_45_degrees_left_target_piece)>=1 and bottom_45_degrees_left_target_piece[0]!=color):
-        king_threats.append(bottom_45_degrees_left_target_position)
+    if(bottom_90_degrees_target_position not in forbidden_squares):
+        if(bottom_90_degrees_is_valid and len(bottom_90_degrees_target_piece)==0):
+            king_threats.append(bottom_90_degrees_target_position)
+        if(bottom_90_degrees_is_valid and len(bottom_90_degrees_target_piece)>=1 and bottom_90_degrees_target_piece[0]!=color):
+            king_threats.append(bottom_90_degrees_target_position)
 
-    if(left_90_degrees_is_valid and len(left_90_degrees_target_piece)==0):
-        king_threats.append(left_90_degrees_target_position)
-    if(left_90_degrees_is_valid and len(left_90_degrees_target_piece)>=1 and left_90_degrees_target_piece[0]!=color):
-        king_threats.append(left_90_degrees_target_position)
+    if(bottom_45_degrees_left_target_position not in forbidden_squares):
+        if(bottom_45_degrees_left_is_valid and len(bottom_45_degrees_left_target_piece)==0):
+            king_threats.append(bottom_45_degrees_left_target_position)
+        if(bottom_45_degrees_left_is_valid and len(bottom_45_degrees_left_target_piece)>=1 and bottom_45_degrees_left_target_piece[0]!=color):
+            king_threats.append(bottom_45_degrees_left_target_position)
 
-    if(top_45_degrees_left_is_valid and len(top_45_degrees_left_target_piece)==0):
-        king_threats.append(top_45_degrees_left_target_position)
-    if(top_45_degrees_left_is_valid and len(top_45_degrees_left_target_piece)>=1 and top_45_degrees_left_target_piece[0]!=color):
-        king_threats.append(top_45_degrees_left_target_position)
+    if(left_90_degrees_target_position not in forbidden_squares):
+        if(left_90_degrees_is_valid and len(left_90_degrees_target_piece)==0):
+            king_threats.append(left_90_degrees_target_position)
+        if(left_90_degrees_is_valid and len(left_90_degrees_target_piece)>=1 and left_90_degrees_target_piece[0]!=color):
+            king_threats.append(left_90_degrees_target_position)
+
+    if(top_45_degrees_left_target_position not in forbidden_squares):
+        if(top_45_degrees_left_is_valid and len(top_45_degrees_left_target_piece)==0):
+            king_threats.append(top_45_degrees_left_target_position)
+        if(top_45_degrees_left_is_valid and len(top_45_degrees_left_target_piece)>=1 and top_45_degrees_left_target_piece[0]!=color):
+            king_threats.append(top_45_degrees_left_target_position)
     
     return king_threats
 
@@ -455,5 +465,5 @@ def king_move_validity(current_position, current_board):
 # print(bishop_move_validity('d5', sampleBoard)) #['c4', 'c6', 'e4']
 # print(queen_move_validity('g4', sampleBoard)) #['h5', 'h3', 'f5', 'h4', 'f4', 'g5', 'g3']
 # print(queen_move_validity('b5', sampleBoard)) #['a4', 'a6', 'c4', 'a5', 'c5', 'b4', 'b3', 'b2', 'b6']
-# print(king_move_validity('e4', sampleBoard)) #['e5', 'f5', 'f4', 'e3', 'd3', 'd4', 'd5']
-# print(king_move_validity('c6', sampleBoard)) #['c5', 'b6', 'd6']
+# print(king_move_validity('e4', sampleBoard)) #['f4', 'e3', 'd3', 'd4']
+# print(king_move_validity('c6', sampleBoard)) #['b6', 'd6']
