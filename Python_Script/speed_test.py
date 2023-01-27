@@ -65,8 +65,12 @@ def timer(function_to_test, args):
 # print(timer(queen_threatened_squares, [sampleQueenPosition, sampleBoard]))
 
 #King
-sampleKingPosition = 'b5'
-sampleKingPiece = sampleBoard[sampleKingPosition][2]
+# sampleKingPosition = 'b5'
+# sampleKingPiece = sampleBoard[sampleKingPosition][2]
 
-print(timer(threatened_squares_king, [sampleKingPiece, sampleBoard, squares]))
-print(timer(king_threatened_squares, [sampleKingPosition, sampleBoard]))
+#Test all threatened squares functions
+print(timer(get_all_threatened_squares, [sampleBoard, squares]))
+print(timer(all_threatened_and_defended_squares, [sampleBoard, 'w']))
+
+# print(timer(threatened_squares_king, [sampleKingPiece, sampleBoard, squares]))
+# print(timer(king_threatened_squares, [sampleKingPosition, sampleBoard]))
