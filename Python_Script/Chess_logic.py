@@ -6,7 +6,6 @@ Created on Sun Apr 17 06:21:01 2022
 """
 import numpy as np
 import pandas as pd
-import utils
 import utils2
 
 
