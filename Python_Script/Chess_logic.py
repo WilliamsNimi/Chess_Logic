@@ -7,6 +7,7 @@ Created on Sun Apr 17 06:21:01 2022
 import numpy as np
 import pandas as pd
 import utils2
+import utils_valid_moves_specific
 
 
 """Board Initialization
@@ -59,7 +60,18 @@ inverted_squares_map = {'0,0': 'a1', '1,0': 'b1', '2,0': 'c1', '3,0': 'd1', '4,0
 
 board_letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
 
-all_threatened_squares = {}
+game_moves = []
+moved_pieces = []
+castling_rooks_map = {"w+ve": ["WKR", "h1", "f1"], "w-ve": ["WQR", "a1", "d1"], "b+ve": ["BKR", "h8", "f8"], "b-ve": ["BQR", "a8", "d8"]}
+def is_castling_move(move):
+    x_diff = squares[move[1]][0] - squares[move[2]][0]
+    if(len(move[0])!=2 or x_diff not in [2, -2]):
+        return []
+    if(move[0][1].lower()!='k'):
+        return []
+    castling_direction = '+ve' if x_diff == 2 else '-ve'
+    return castling_rooks_map[move[0][0].lower() + castling_direction]
+    
 
 def render_board(Board):
     
@@ -298,12 +310,19 @@ def make_move(validCheck, move):
     global move_successful
     
     if validCheck == True:
+        castling_rook_and_squares = is_castling_move(move) 
+        moved_pieces.append(move[0])
+        move_record = {"piece": move[0], "current_square": move[2],"target_square": move[1], "board_before": Board}
         Board[move[1]][2] = move[0]
         Board[move[2]][2] = ""
+        if(castling_rook_and_squares):
+            moved_pieces.append(castling_rook_and_squares[0])
+            Board[castling_rook_and_squares[2]][2] = castling_rook_and_squares[0]
+            Board[castling_rook_and_squares[1]][2] = ""
+            move_record["castling_rook"] = castling_rook_and_squares[0]
+        move_record["board_after"] = Board
+        game_moves.append(move_record)
         move_successful = True
-        print(utils2.get_all_threatened_squares(Board, squares))
-        print(get_squares_threatened_by_white(utils2.get_all_threatened_squares(Board, squares)))
-        print(get_squares_threatened_by_black(utils2.get_all_threatened_squares(Board, squares)))
 
     else:
         move_successful = False
@@ -341,7 +360,7 @@ def play(piece_to_move, new_position):
         print(make_move(move_validity_Queen(move), move))
         pieces_moved[piece_to_move] = piece_to_move
     elif(piece_to_move == "WK" or piece_to_move == "BK"):
-        print(make_move(move_validity_king(move), move))
+        print(make_move(utils_valid_moves_specific.king_move_validity(move, Board, moved_pieces), move))
         pieces_moved[piece_to_move] = piece_to_move
     else:
         print("Please check your moves")
