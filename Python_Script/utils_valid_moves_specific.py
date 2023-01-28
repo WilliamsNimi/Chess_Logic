@@ -9,7 +9,7 @@ inverted_squares_map = {'0,0': 'a1', '1,0': 'b1', '2,0': 'c1', '3,0': 'd1', '4,0
 
 from utils_threatened_squares_specific import *
 
-def pawn_move_validity(current_position, current_board, target_square):
+def pawn_move_validity(current_position, current_board, target_position):
     pawn_threats = []
     x_coord = squares[current_position][0]
     y_coord = squares[current_position][1]
@@ -47,9 +47,9 @@ def pawn_move_validity(current_position, current_board, target_square):
     if(top_left_square_is_valid and len(left_target_piece)>=1 and left_target_piece[0]!=color):
         pawn_threats.append(left_target_position)
 
-    return target_square in pawn_threats
+    return target_position in pawn_threats
 
-def knight_move_validity(current_position, current_board, target_square):
+def knight_move_validity(current_position, current_board, target_position):
     """
     The knight has 8 potentially valid destination squares it can attack.
     We'll check each of these to see if they're:
@@ -148,9 +148,9 @@ def knight_move_validity(current_position, current_board, target_square):
     if(bottom_far_left_square_is_valid and len(bottom_far_left_target_piece)>=1 and bottom_far_left_target_piece[0]!=color):
         knight_threats.append(bottom_far_left_target_position)
     
-    return target_square in knight_threats
+    return target_position in knight_threats
 
-def rook_move_validity(current_position, current_board, target_square):
+def rook_move_validity(current_position, current_board, target_position):
     """
     A rook can potentially attack in 4 vertical directions (+x, -x, +y, -y).
     We'll check each of these directions for move_validity and occupation
@@ -228,9 +228,9 @@ def rook_move_validity(current_position, current_board, target_square):
         if(this_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
             rook_threats.append(target_position)
             break
-    return target_square in rook_threats
+    return target_position in rook_threats
 
-def bishop_move_validity(current_position, current_board, target_square):
+def bishop_move_validity(current_position, current_board, target_position):
     """
     A Bishop can potentially attack in 4 diagonal directions (z_up_right(1:15 on a clock), z_down_right(4:15 on a clock), 
     z_up_left(10:15 on a clock), z_down_left(7:15 on a clock)).
@@ -312,9 +312,9 @@ def bishop_move_validity(current_position, current_board, target_square):
         if(this_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
             bishop_threats.append(target_position)
             break
-    return target_square in bishop_threats
+    return target_position in bishop_threats
 
-def queen_move_validity(current_position, current_board, target_square):
+def queen_move_validity(current_position, current_board, target_position):
 
     """
     A Queen combines the moves of both the Bishop and Rook.
@@ -322,9 +322,23 @@ def queen_move_validity(current_position, current_board, target_square):
     """
     bishop_threats = bishop_move_validity(current_position, current_board)
     rook_threats = rook_move_validity(current_position, current_board)
-    return target_square in (bishop_threats + rook_threats)
+    return target_position in (bishop_threats + rook_threats)
 
-def king_move_validity(current_position, current_board, target_square):
+def is_empty_square(board, square):
+    return board[square][2] == ""
+
+def castling_check(color, direction, board, forbidden_squares):
+    squares_to_check_dict = {"w+ve": ["f1", "g1"], "w-ve": ["c1", "d1", "b1"], "b+ve": ["f8", "g8"], "b-ve": ["c8", "d8", "b8"]}
+    valid_castling_square_dict = {"w+ve": "g1", "w-ve": "c1", "b+ve": "g8", "b-ve": "c8"}
+
+    for index, square_to_check in enumerate(squares_to_check_dict[color.lower()+direction]):
+        if(index < 2 and square_to_check in forbidden_squares):
+            return ''
+        if(not is_empty_square(board, square_to_check)):
+            return ''
+    return valid_castling_square_dict[color.lower()+direction]
+
+def king_move_validity(move, current_board, moved_pieces):
     """
     The king has 8 potentially valid destination squares it can attack.
     We'll check each of these to see if they're:
@@ -333,9 +347,27 @@ def king_move_validity(current_position, current_board, target_square):
     3. Determine based on 1 and 2 whether the square is threatened by the knight
     """
     king_threats = []
+    current_position = move[2]
+    target_position = move[1]
+    piece_to_move=move[0]
     x_coord = squares[current_position][0]
     y_coord = squares[current_position][1]
+    x_coord_target = squares[target_position][0]
     color = current_board[current_position][2][0]
+    x_diff = x_coord_target - x_coord
+    forbidden_squares = all_threatened_and_defended_squares(current_board, color)
+    #check for castling
+    castling_rook_dict = {"w+ve": "WKR", "w-ve": "WQR", "b+ve": "BKR", "b-ve": "BQR"}
+    castling_direction = '+ve' if x_diff == 2 else '-ve'
+    rook_to_castle_with = castling_rook_dict[color.lower()+castling_direction]
+    KING_OR_ROOK_ALREADY_MOVED = (piece_to_move in moved_pieces) or (rook_to_castle_with in moved_pieces)
+    if(x_diff in [2, -2]):
+        if(KING_OR_ROOK_ALREADY_MOVED):
+            return False
+        castle_square = castling_check(color, castling_direction, current_board, forbidden_squares)
+        if(castle_square==''):
+            return False
+        king_threats.append(castle_square)
     top_90_degrees_y_coord = normalized_arithmetic(color, "sum", y_coord, 1)
     top_45_degrees_left_x_coord = normalized_arithmetic(color, "sum", x_coord, 1)
     top_45_degrees_left_y_coord = normalized_arithmetic(color, "sum", y_coord, 1)
@@ -378,8 +410,6 @@ def king_move_validity(current_position, current_board, target_square):
     bottom_45_degrees_left_target_piece = current_board[bottom_45_degrees_left_target_position][2] if bottom_45_degrees_left_is_valid else 'invalid_piece'
     left_90_degrees_target_piece = current_board[left_90_degrees_target_position][2] if left_90_degrees_is_valid else 'invalid_piece'
     top_45_degrees_left_target_piece = current_board[top_45_degrees_left_target_position][2] if top_45_degrees_left_is_valid else 'invalid_piece'
-
-    forbidden_squares = all_threatened_and_defended_squares(current_board, color)
 
     if(top_90_degrees_target_position not in forbidden_squares):
         if(top_90_degrees_is_valid and len(top_90_degrees_target_piece)==0):
@@ -429,7 +459,7 @@ def king_move_validity(current_position, current_board, target_square):
         if(top_45_degrees_left_is_valid and len(top_45_degrees_left_target_piece)>=1 and top_45_degrees_left_target_piece[0]!=color):
             king_threats.append(top_45_degrees_left_target_position)
     
-    return target_square in king_threats
+    return target_position in king_threats
 
 ### Tests
 
@@ -467,3 +497,26 @@ def king_move_validity(current_position, current_board, target_square):
 # print(queen_move_validity('b5', sampleBoard)) #['a4', 'a6', 'c4', 'a5', 'c5', 'b4', 'b3', 'b2', 'b6']
 # print(king_move_validity('e4', sampleBoard)) #['f4', 'e3', 'd3', 'd4']
 # print(king_move_validity('c6', sampleBoard)) #['b6', 'd6']
+
+# castlingBoard = {"a1":[0,0,"WQR"],"b1":[1,0,""],"c1":[2,0,""],"d1":[3,0,""],"e1":[4,0,"WK"], "f1":[5,0,""], "g1":[6,0,""], "h1":[7,0,"WKR"], 
+         
+# "a2":[0,1,"Wp1"],"b2":[1,1,"WQB"],"c2":[2,1,""],"d2":[3,1,""],"e2":[4,1,"Wp5"], "f2":[5,1,""], "g2":[6,1,"BKB"], "h2":[7,1,"Wp8"],
+         
+# "a3":[0,2,"WQN"],"b3":[1,2,""],"c3":[2,2,""],"d3":[3,2,"WQ"],"e3":[4,2,""], "f3":[5,2,"WKN"], "g3":[6,2,""], "h3":[7,2,""],
+
+# "a4":[0,3,""],"b4":[1,3,"Wp2"],"c4":[2,3,"Wp3"],"d4":[3,3,"Wp4"],"e4":[4,3,""], "f4":[5,3,"Wp6"], "g4":[6,3,"Wp7"], "h4":[7,3,""],  
+
+# "a5":[0,4,""],"b5":[1,4,""],"c5":[2,4,""],"d5":[3,4,"Bp5"],"e5":[4,4,""], "f5":[5,4,""], "g5":[6,4,""], "h5":[7,4,""],
+
+# "a6":[0,5,"BQN"],"b6":[1,5,"Bp7"],"c6":[2,5,"Bp6"],"d6":[3,5,"BQ"],"e6":[4,5,""], "f6":[5,5,""], "g6":[6,5,""], "h6":[7,5,""],
+
+# "a7":[0,6,"Bp8"],"b7":[1,6,"BQB"],"c7":[2,6,""],"d7":[3,6,""],"e7":[4,6,"Bp4"], "f7":[5,6,"Bp3"], "g7":[6,6,"Bp2"], "h7":[7,6,"Bp1"], 
+
+# "a8":[0,7,"BQR"],"b8":[1,7,""],"c8":[2,7,""],"d8":[3,7,""],"e8":[4,7,"BK"], "f8":[5,7,""], "g8":[6,7,"BKN"], "h8":[7,7,"BKR"]
+         
+#          }
+
+#print(king_move_validity(['BK', 'c8', 'e8'], castlingBoard, [])) #Test black king castling queen side, all scenarios(1. blocking pieces 2. free to castle, 3. Inbetween square under attack 4. Rook already moved 5. King already moved)
+#print(king_move_validity(['WK', 'g1', 'e1'], castlingBoard, [])) #Test White king castling kingx side, all scenarios(1. blocking pieces 2. free to castle, 3. Inbetween square under attack 4. Rook already moved 5. King already moved)
+#print(king_move_validity(['WK', 'c1', 'e1'], castlingBoard, ['WK'])) #Test White Queen castling kingx side, all scenarios(1. blocking pieces 2. free to castle, 3. Inbetween square under attack 4. Rook already moved 5. King already moved)
+# 3 out of 4 is 75%, that's an A, leave me the fuck alone
