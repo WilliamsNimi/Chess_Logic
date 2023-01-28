@@ -347,16 +347,16 @@ def play(piece_to_move, new_position):
     move.append(current_pos)
     
     if(piece_to_move[0:2] == "Wp" or piece_to_move[0:2] == "Bp"):
-        print(make_move(move_validity_pawn(move), move))
+        print(make_move(utils_valid_moves_specific.pawn_move_validity(move, Board), move))
         pieces_moved[piece_to_move] = piece_to_move
     elif(piece_to_move == "WQR" or piece_to_move == "WKR" or piece_to_move == "BQR" or piece_to_move == "BKR"):
-        print(make_move(move_validity_Rook(move), move))
+        print(make_move(utils_valid_moves_specific.rook_move_validity(move, Board), move))
         pieces_moved[piece_to_move] = piece_to_move
     elif(piece_to_move == "WQN" or piece_to_move == "WKN" or piece_to_move == "BQN" or piece_to_move == "BKN" ):
-        print(make_move(move_validity_knight(move), move))
+        print(make_move(utils_valid_moves_specific.knight_move_validity(move, Board), move))
         pieces_moved[piece_to_move] = piece_to_move
     elif(piece_to_move == "WQB" or piece_to_move == "WKB" or piece_to_move == "BQB" or piece_to_move == "BKB"):
-        print(make_move(move_validity_Bishop(move), move))
+        print(make_move(utils_valid_moves_specific.bishop_move_validity(move, Board), move))
         pieces_moved[piece_to_move] = piece_to_move
     elif(piece_to_move == "WQ" or piece_to_move == "BQ"):
         print(make_move(utils_valid_moves_specific.queen_move_validity(move, Board), move))
