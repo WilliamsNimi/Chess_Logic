@@ -312,6 +312,8 @@ def make_move(validCheck, move):
     if validCheck == True:
         castling_rook_and_squares = is_castling_move(move) 
         moved_pieces.append(move[0])
+        # Creating a snapshot of the game on every move by recording the move, origin, destination, and before and after boards
+        # We probably don't need this yet but it'll come handy if we need to display move history and stuff like that
         move_record = {"piece": move[0], "current_square": move[2],"target_square": move[1], "board_before": Board}
         Board[move[1]][2] = move[0]
         Board[move[2]][2] = ""
