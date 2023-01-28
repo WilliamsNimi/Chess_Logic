@@ -359,7 +359,7 @@ def play(piece_to_move, new_position):
         print(make_move(move_validity_Bishop(move), move))
         pieces_moved[piece_to_move] = piece_to_move
     elif(piece_to_move == "WQ" or piece_to_move == "BQ"):
-        print(make_move(move_validity_Queen(move), move))
+        print(make_move(utils_valid_moves_specific.queen_move_validity(move, Board), move))
         pieces_moved[piece_to_move] = piece_to_move
     elif(piece_to_move == "WK" or piece_to_move == "BK"):
         print(make_move(utils_valid_moves_specific.king_move_validity(move, Board, moved_pieces), move))
