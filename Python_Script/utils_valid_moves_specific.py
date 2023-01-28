@@ -9,7 +9,7 @@ inverted_squares_map = {'0,0': 'a1', '1,0': 'b1', '2,0': 'c1', '3,0': 'd1', '4,0
 
 from utils_threatened_squares_specific import *
 
-def pawn_move_validity(current_position, current_board, target_position):
+def pawn_move_validity(current_position, current_board, target_square):
     pawn_threats = []
     x_coord = squares[current_position][0]
     y_coord = squares[current_position][1]
@@ -47,9 +47,9 @@ def pawn_move_validity(current_position, current_board, target_position):
     if(top_left_square_is_valid and len(left_target_piece)>=1 and left_target_piece[0]!=color):
         pawn_threats.append(left_target_position)
 
-    return target_position in pawn_threats
+    return target_square in pawn_threats
 
-def knight_move_validity(current_position, current_board, target_position):
+def knight_move_validity(current_position, current_board, target_square):
     """
     The knight has 8 potentially valid destination squares it can attack.
     We'll check each of these to see if they're:
@@ -148,9 +148,9 @@ def knight_move_validity(current_position, current_board, target_position):
     if(bottom_far_left_square_is_valid and len(bottom_far_left_target_piece)>=1 and bottom_far_left_target_piece[0]!=color):
         knight_threats.append(bottom_far_left_target_position)
     
-    return target_position in knight_threats
+    return target_square in knight_threats
 
-def rook_move_validity(current_position, current_board, target_position):
+def rook_move_validity(current_position, current_board, target_square):
     """
     A rook can potentially attack in 4 vertical directions (+x, -x, +y, -y).
     We'll check each of these directions for move_validity and occupation
@@ -228,9 +228,9 @@ def rook_move_validity(current_position, current_board, target_position):
         if(this_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
             rook_threats.append(target_position)
             break
-    return target_position in rook_threats
+    return target_square in rook_threats
 
-def bishop_move_validity(current_position, current_board, target_position):
+def bishop_move_validity(current_position, current_board, target_square):
     """
     A Bishop can potentially attack in 4 diagonal directions (z_up_right(1:15 on a clock), z_down_right(4:15 on a clock), 
     z_up_left(10:15 on a clock), z_down_left(7:15 on a clock)).
@@ -312,17 +312,19 @@ def bishop_move_validity(current_position, current_board, target_position):
         if(this_square_is_valid and len(target_piece) >= 1 and target_piece[0] != color):
             bishop_threats.append(target_position)
             break
-    return target_position in bishop_threats
+    return target_square in bishop_threats
 
-def queen_move_validity(current_position, current_board, target_position):
+def queen_move_validity(move, current_board):
 
     """
     A Queen combines the moves of both the Bishop and Rook.
     We'll simply call the existing functions and combine their results
     """
-    bishop_threats = bishop_move_validity(current_position, current_board)
-    rook_threats = rook_move_validity(current_position, current_board)
-    return target_position in (bishop_threats + rook_threats)
+    current_position = move[2]
+    target_square = move[1]
+    bishop_threats = bishop_move_validity(current_position, current_board, target_square)
+    rook_threats = rook_move_validity(current_position, current_board, target_square)
+    return bishop_threats or rook_threats
 
 def is_empty_square(board, square):
     return board[square][2] == ""
