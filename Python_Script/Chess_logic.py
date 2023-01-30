@@ -170,7 +170,7 @@ def move_validity_Rook(move):
                     elif((y_coord - value[1])> 0):
                         while(y_coord > int(move[1][1])-1):
                             y_coord -= 1
-                            strKey = board_letters[x_coord] + str(y_coord-1)
+                            strKey = board_letters[x_coord] + str(y_coord + 1)
                             if(Board[strKey][2] != ""):
                                 return False
                 elif((y_coord - value[1] == 0)):
