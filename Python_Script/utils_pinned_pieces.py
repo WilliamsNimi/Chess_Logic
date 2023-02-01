@@ -1,14 +1,14 @@
 import utils_threatened_squares_specific
 import utils_valid_moves_specific
 
-def generate_pinned_squares(king_square, current_board):
+def generate_pinned_squares(king_square, current_board, king_color):
     (king_x_coord, king_y_coord) = utils_threatened_squares_specific.squares[king_square]
     valid_king_move_directions = [[-1, +0], [+1, +0], [+0, -1], [+0, +1], [-1, -1], [+1, +1], [-1, +1], [+1, -1]]
-    pinned_squares = []
-    king_color = current_board[king_square][2][0].lower()
+    pinned_squares_map = {}
     for direction in valid_king_move_directions:
         king_defender_encountered = False
         pinned_square = ""
+        valid_move_squares = []
         for n in range(1, 8):
             x_coord = utils_threatened_squares_specific.normalized_arithmetic(king_color, "sum", king_x_coord, n*direction[0])
             y_coord = utils_threatened_squares_specific.normalized_arithmetic(king_color, "sum", king_y_coord, n*direction[1])
@@ -19,19 +19,21 @@ def generate_pinned_squares(king_square, current_board):
                     break
                 if len(current_piece) >= 1 and current_piece[0].lower() == king_color and king_defender_encountered:
                     break
-                if len(current_piece) >= 1 and current_piece[0].lower() != king_color and king_defender_encountered:
+                if len(current_piece) >= 1 and current_piece[0].lower() != king_color and king_defender_encountered: #encountering a different color piece after encountering a same color piece, check if it is a "pinner" then break
                     current_piece_name_color_dict = utils_threatened_squares_specific.extract_piece_name_and_color(current_piece)
                     if(current_piece_name_color_dict["name"] in ["r", "b", "q"]):
-                        pinned_squares.append(pinned_square)
+                        valid_move_squares.append(current_square)
+                        pinned_squares_map[pinned_square] = valid_move_squares
                     break
                 if len(current_piece) == 0:
+                    valid_move_squares.append(current_square)
                     continue
-                if len(current_piece) >= 1 and current_piece[0].lower() == king_color and not king_defender_encountered:
+                if len(current_piece) >= 1 and current_piece[0].lower() == king_color and not king_defender_encountered: #encountering a same color piece for first time. Note it and continue
                     king_defender_encountered = True
                     pinned_square = current_square
                     continue
 
-    return pinned_squares
+    return pinned_squares_map
 
 ### Tests
 
