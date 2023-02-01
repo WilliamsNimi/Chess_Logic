@@ -7,6 +7,8 @@ Created on Sun Apr 17 06:21:01 2022
 import numpy as np
 import pandas as pd
 import utils_valid_moves_specific
+import utils_pinned_pieces
+import utils_threatened_squares_specific
 
 
 """Board Initialization
@@ -58,6 +60,8 @@ squares = {"a1":(0,0),"b1":(1,0),"c1":(2,0),"d1":(3,0),"e1":(4,0),"f1":(5,0),"g1
 inverted_squares_map = {'0,0': 'a1', '1,0': 'b1', '2,0': 'c1', '3,0': 'd1', '4,0': 'e1', '5,0': 'f1', '6,0': 'g1', '7,0': 'h1', '0,1': 'a2', '1,1': 'b2', '2,1': 'c2', '3,1': 'd2', '4,1': 'e2', '5,1': 'f2', '6,1': 'g2', '7,1': 'h2', '0,2': 'a3', '1,2': 'b3', '2,2': 'c3', '3,2': 'd3', '4,2': 'e3', '5,2': 'f3', '6,2': 'g3', '7,2': 'h3', '0,3': 'a4', '1,3': 'b4', '2,3': 'c4', '3,3': 'd4', '4,3': 'e4', '5,3': 'f4', '6,3': 'g4', '7,3': 'h4', '0,4': 'a5', '1,4': 'b5', '2,4': 'c5', '3,4': 'd5', '4,4': 'e5', '5,4': 'f5', '6,4': 'g5', '7,4': 'h5', '0,5': 'a6', '1,5': 'b6', '2,5': 'c6', '3,5': 'd6', '4,5': 'e6', '5,5': 'f6', '6,5': 'g6', '7,5': 'h6', '0,6': 'a7', '1,6': 'b7', '2,6': 'c7', '3,6': 'd7', '4,6': 'e7', '5,6': 'f7', '6,6': 'g7', '7,6': 'h7', '0,7': 'a8', '1,7': 'b8', '2,7': 'c8', '3,7': 'd8', '4,7': 'e8', '5,7': 'f8', '6,7': 'g8', '7,7': 'h8'}
 
 board_letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
+
+king_square_dict = {"w": "e1", "b": "e8"} #Explicitly specifying the kings' squares so we don't have to do a board look up on every move. Will update this state dictionary any time the king makes a move to a different square.
 
 game_moves = []
 moved_pieces = []
@@ -156,7 +160,7 @@ def make_move(validCheck, move):
     
     """This functions changes the board values in the dictionary and returns an illegal move message if the move is invalid"""
     global move_successful
-    
+
     if validCheck == True:
         castling_rook_and_squares = is_castling_move(move) 
         moved_pieces.append(move[0])
@@ -172,6 +176,8 @@ def make_move(validCheck, move):
             move_record["castling_rook"] = castling_rook_and_squares[0]
         move_record["board_after"] = Board
         game_moves.append(move_record)
+        if(move[0] in ["BK", "WK"]):
+            king_square_dict[move[0][0].lower()] = move[1]
         move_successful = True
 
     else:
@@ -184,7 +190,7 @@ def get_position_of_piece(move):
         if move[0] in values:
             return key
 
-def play(piece_to_move, new_position):
+def play(piece_to_move, new_position, whiteToPlay):
     
     pieces_moved = {} #Change to move history and track both black and white's move
     
@@ -193,27 +199,15 @@ def play(piece_to_move, new_position):
     move.append(new_position)
     current_pos = get_position_of_piece(move)
     move.append(current_pos)
-    
-    if(piece_to_move[0:2] == "Wp" or piece_to_move[0:2] == "Bp"):
-        print(make_move(utils_valid_moves_specific.pawn_move_validity(move, Board), move))
-        pieces_moved[piece_to_move] = piece_to_move
-    elif(piece_to_move == "WQR" or piece_to_move == "WKR" or piece_to_move == "BQR" or piece_to_move == "BKR"):
-        print(make_move(utils_valid_moves_specific.rook_move_validity(move, Board), move))
-        pieces_moved[piece_to_move] = piece_to_move
-    elif(piece_to_move == "WQN" or piece_to_move == "WKN" or piece_to_move == "BQN" or piece_to_move == "BKN" ):
-        print(make_move(utils_valid_moves_specific.knight_move_validity(move, Board), move))
-        pieces_moved[piece_to_move] = piece_to_move
-    elif(piece_to_move == "WQB" or piece_to_move == "WKB" or piece_to_move == "BQB" or piece_to_move == "BKB"):
-        print(make_move(utils_valid_moves_specific.bishop_move_validity(move, Board), move))
-        pieces_moved[piece_to_move] = piece_to_move
-    elif(piece_to_move == "WQ" or piece_to_move == "BQ"):
-        print(make_move(utils_valid_moves_specific.queen_move_validity(move, Board), move))
-        pieces_moved[piece_to_move] = piece_to_move
-    elif(piece_to_move == "WK" or piece_to_move == "BK"):
-        print(make_move(utils_valid_moves_specific.king_move_validity(move, Board, moved_pieces), move))
-        pieces_moved[piece_to_move] = piece_to_move
-    else:
-        print("Please check your moves")
+    current_color = 'w' if whiteToPlay else 'b'
+    king_square = king_square_dict[current_color]
+    move_validity = False
+    pinned_squares_map = utils_pinned_pieces.generate_pinned_squares(king_square, Board, current_color)
+    source_square_is_pinned = move[2] in list(pinned_squares_map.keys()) and move[1] not in pinned_squares_map[move[2]]
+    name_of_piece_to_move = utils_threatened_squares_specific.extract_piece_name_and_color(piece_to_move)["name"]
+    if(not source_square_is_pinned):
+        move_validity = utils_valid_moves_specific.validity_function_map[name_of_piece_to_move](move, Board, moved_pieces)
+    print(make_move(move_validity, move))
         
 exit  = 0  
 BlackTurn = False
@@ -229,12 +223,12 @@ while(exit != 1):
     piece_to_move = input("Please enter the piece name you want to move. Use the board as guide: ")
     new_position = input("Please enter the position you want to move it to in normal chess notation: ")
     if(WhiteTurn == True and piece_to_move[0] == "W"):
-        print(play(piece_to_move, new_position))
+        print(play(piece_to_move, new_position, WhiteTurn))
         if(move_successful == True):
             WhiteTurn  = False
             BlackTurn = True
     elif(BlackTurn  == True and piece_to_move[0] == "B"):
-        print(play(piece_to_move, new_position))
+        print(play(piece_to_move, new_position, WhiteTurn))
         if(move_successful == True):
             WhiteTurn  = True
             BlackTurn = False
