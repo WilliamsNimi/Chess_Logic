@@ -9,7 +9,7 @@ inverted_squares_map = {'0,0': 'a1', '1,0': 'b1', '2,0': 'c1', '3,0': 'd1', '4,0
 
 from utils_threatened_squares_specific import *
 
-def pawn_move_validity(move, current_board):
+def pawn_move_validity(move, current_board, moved_pieces = []):
     pawn_threats = []
     current_position = move[2]
     target_square = move[1]
@@ -51,7 +51,7 @@ def pawn_move_validity(move, current_board):
 
     return target_square in pawn_threats
 
-def knight_move_validity(move, current_board):
+def knight_move_validity(move, current_board, moved_pieces = []):
     """
     The knight has 8 potentially valid destination squares it can attack.
     We'll check each of these to see if they're:
@@ -154,7 +154,7 @@ def knight_move_validity(move, current_board):
     
     return target_square in knight_threats
 
-def rook_move_validity(move, current_board):
+def rook_move_validity(move, current_board, moved_pieces = []):
     """
     A rook can potentially attack in 4 vertical directions (+x, -x, +y, -y).
     We'll check each of these directions for move_validity and occupation
@@ -236,7 +236,7 @@ def rook_move_validity(move, current_board):
             break
     return target_square in rook_threats
 
-def bishop_move_validity(move, current_board):
+def bishop_move_validity(move, current_board, moved_pieces = []):
     """
     A Bishop can potentially attack in 4 diagonal directions (z_up_right(1:15 on a clock), z_down_right(4:15 on a clock), 
     z_up_left(10:15 on a clock), z_down_left(7:15 on a clock)).
@@ -322,7 +322,7 @@ def bishop_move_validity(move, current_board):
             break
     return target_square in bishop_threats
 
-def queen_move_validity(move, current_board):
+def queen_move_validity(move, current_board, moved_pieces = []):
 
     """
     A Queen combines the moves of both the Bishop and Rook.
@@ -469,6 +469,14 @@ def king_move_validity(move, current_board, moved_pieces):
     
     return target_position in king_threats
 
+validity_function_map = {
+    "p": pawn_move_validity,
+    "r": rook_move_validity,
+    "n": knight_move_validity,
+    "b": bishop_move_validity,
+    "q": queen_move_validity,
+    "k": king_move_validity
+}
 ### Tests
 
 # sampleBoard = {"a1":[0,0,""],"b1":[1,0,"WQN"],"c1":[2,0,""],"d1":[3,0,""],"e1":[4,0,""], "f1":[5,0,"WKB"], "g1":[6,0,""], "h1":[7,0,"WKR"], 
