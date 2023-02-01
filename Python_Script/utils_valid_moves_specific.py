@@ -363,7 +363,7 @@ def king_move_validity(move, current_board, moved_pieces):
     x_coord_target = squares[target_position][0]
     color = current_board[current_position][2][0]
     x_diff = x_coord_target - x_coord
-    forbidden_squares = all_threatened_and_defended_squares(current_board, color)
+    forbidden_squares = flatten_a_dictionary_of_arrays(all_threatened_and_defended_squares(current_board, color))
     #check for castling
     castling_rook_dict = {"w+ve": "WKR", "w-ve": "WQR", "b+ve": "BKR", "b-ve": "BQR"}
     castling_direction = '+ve' if x_diff == 2 else '-ve'

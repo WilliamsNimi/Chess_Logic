@@ -387,18 +387,21 @@ def all_threatened_and_defended_squares(current_board, king_color):
     "k": king_threatened_squares,
   }
 
-  all_threats = []
+  all_threats = {}
 
   for(piece_position, value) in current_board.items():
       if(len(value[2])>0):
           piece_details = extract_piece_name_and_color(value[2])
           if(piece_details["color"]!=king_color.lower()):
               piece_threats = piece_mapping[piece_details["name"]](piece_position, current_board)
-              all_threats += piece_threats
+              all_threats[piece_position] = piece_threats
+  return all_threats
+
+def flatten_a_dictionary_of_arrays(dict):
+  all_threats = []
+  for(key, value) in dict.items():
+    all_threats += value
   return deduplicate(all_threats)
-
-
-
 
 ### Tests
 
@@ -437,4 +440,5 @@ def all_threatened_and_defended_squares(current_board, king_color):
 # print(king_threatened_squares('c6', sampleBoard)) #['c5', 'b5', 'b6', 'b7', 'c7', 'd7', 'd6', 'd5']
 # print(extract_piece_name_and_color("Bk"))
 
-# print(all_threatened_and_defended_squares(sampleBoard, 'w'))
+# print(all_threatened_and_defended_squares(sampleBoard, 'w')) #{'b5': ['a4', 'a6', 'c4', 'c6', 'a5', 'c5', 'd5', 'b4', 'b3', 'b2', 'b6', 'b7'], 'd5': ['c4', 'c6', 'e4', 'e6'], 'g5': ['f5', 'e5', 'd5', 'h5', 'g4', 'g6', 'g7'], 'c6': ['c5', 'b5', 'b6', 'b7', 'c7', 'd7', 'd6', 'd5'], 'f6': ['d5', 'e4', 'h5', 'g4', 'd7', 'e8', 'h7', 'g8'], 'a7': ['b6'], 'b7': ['a6', 'c6'], 'c7': ['b6', 'd6'], 'd7': ['c6', 'e6'], 'e7': ['d6', 'f6'], 'f7': ['e6', 'g6'], 'g7': ['f6', 'h6'], 'h7': ['g6'], 'a8': ['b8', 'a7'], 'b8': ['a6', 'd7', 'c6'], 'f8': ['e7', 'g7']}
+# print(flatten_a_dictionary_of_arrays(all_threatened_and_defended_squares(sampleBoard, 'w'))) #['b4', 'b2', 'b7', 'h5', 'a4', 'd6', 'f6', 'b5', 'b6', 'c4', 'g4', 'e7', 'c6', 'g8', 'b3', 'h7', 'e5', 'a7', 'g7', 'h6', 'a5', 'e4', 'c5', 'b8', 'e6', 'f5', 'd7', 'd5', 'g6', 'e8', 'c7', 'a6']
