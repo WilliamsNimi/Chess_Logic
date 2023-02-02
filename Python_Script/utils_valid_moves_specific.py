@@ -50,8 +50,14 @@ def pawn_move_valid_squares(move, current_board):
 
     return pawn_threats
 
-def pawn_move_validity(move, current_board, moved_pieces=[]):
-    return move[1] in pawn_move_valid_squares(move, current_board)
+def pawn_move_validity(move, current_board, pinned_squares_map):
+    valid_pawn_moves = pawn_move_valid_squares(move, current_board)
+    current_square = move[2]
+    target_square = move[1]
+    if(bool(pinned_squares_map) and current_square in list(pinned_squares_map.keys())):
+        return target_square in list(filter(lambda pinned_square: pinned_square in valid_pawn_moves, pinned_squares_map[current_square]))
+    else:
+        return target_square in valid_pawn_moves
 
 def knight_move_valid_squares(move, current_board):
     """
@@ -155,8 +161,14 @@ def knight_move_valid_squares(move, current_board):
     
     return knight_threats
 
-def knight_move_validity(move, current_board, moved_pieces = []):
-    return move[1] in knight_move_valid_squares(move, current_board)
+def knight_move_validity(move, current_board, pinned_squares_map):
+    valid_knight_moves = knight_move_valid_squares(move, current_board)
+    current_square = move[2]
+    target_square = move[1]
+    if(bool(pinned_squares_map) and current_square in list(pinned_squares_map.keys())):
+        return target_square in list(filter(lambda pinned_square: pinned_square in valid_knight_moves, pinned_squares_map[current_square]))
+    else:
+        return target_square in valid_knight_moves
 
 def rook_move_valid_squares(move, current_board):
     """
@@ -239,8 +251,14 @@ def rook_move_valid_squares(move, current_board):
             break
     return rook_threats
 
-def rook_move_validity(move, current_board, moved_pieces = []):
-    return move[1] in rook_move_valid_squares(move, current_board)
+def rook_move_validity(move, current_board, pinned_squares_map):
+    valid_rook_moves = rook_move_valid_squares(move, current_board)
+    current_square = move[2]
+    target_square = move[1]
+    if(bool(pinned_squares_map) and current_square in list(pinned_squares_map.keys())):
+        return target_square in list(filter(lambda pinned_square: pinned_square in valid_rook_moves, pinned_squares_map[current_square]))
+    else:
+        return target_square in valid_rook_moves
 
 def bishop_move_valid_squares(move, current_board):
     """
@@ -327,8 +345,14 @@ def bishop_move_valid_squares(move, current_board):
             break
     return bishop_threats
 
-def bishop_move_validity(move, current_board, moved_pieces = []):
-    return move[1] in bishop_move_valid_squares(move, current_board)
+def bishop_move_validity(move, current_board, pinned_squares_map):
+    valid_bishop_moves = bishop_move_valid_squares(move, current_board)
+    current_square = move[2]
+    target_square = move[1]
+    if(bool(pinned_squares_map) and current_square in list(pinned_squares_map.keys())):
+        return target_square in list(filter(lambda pinned_square: pinned_square in valid_bishop_moves, pinned_squares_map[current_square]))
+    else:
+        return target_square in valid_bishop_moves
 
 def queen_move_valid_squares(move, current_board):
 
@@ -340,8 +364,14 @@ def queen_move_valid_squares(move, current_board):
     rook_threats = rook_move_valid_squares(move, current_board)
     return bishop_threats + rook_threats
 
-def queen_move_validity(move, current_board, moved_pieces = []):
-    return move[1] in queen_move_valid_squares(move, current_board)
+def queen_move_validity(move, current_board, pinned_squares_map):
+    valid_queen_moves = queen_move_valid_squares(move, current_board)
+    current_square = move[2]
+    target_square = move[1]
+    if(bool(pinned_squares_map) and current_square in list(pinned_squares_map.keys())):
+        return target_square in list(filter(lambda pinned_square: pinned_square in valid_queen_moves, pinned_squares_map[current_square]))
+    else:
+        return target_square in valid_queen_moves
 
 def is_empty_square(board, square):
     return board[square][2] == ""
