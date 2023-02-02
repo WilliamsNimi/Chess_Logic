@@ -403,6 +403,21 @@ def flatten_a_dictionary_of_arrays(dict):
     all_threats += value
   return deduplicate(all_threats)
 
+
+def flip_colors(current_color):
+    return "b" if current_color == "w" else "w"
+
+def find_attackers(square_to_check, threatened_squares_and_attackers):
+    ###
+    # This function returns a list of squares of pieces threatening a particular square
+    # ###
+    attacking_squares = []
+    for attacker, attacked_squares in threatened_squares_and_attackers.items():
+        if(square_to_check in attacked_squares):
+            attacking_squares.append(attacker)
+    return attacking_squares
+
+
 ### Tests
 
 # sampleBoard = {"a1":[0,0,""],"b1":[1,0,"WQN"],"c1":[2,0,""],"d1":[3,0,""],"e1":[4,0,""], "f1":[5,0,"WKB"], "g1":[6,0,""], "h1":[7,0,"WKR"], 
