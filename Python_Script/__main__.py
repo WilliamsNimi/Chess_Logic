@@ -66,6 +66,9 @@ king_square_dict = {"w": "e1", "b": "e8"} #Explicitly specifying the kings' squa
 game_moves = []
 moved_pieces = []
 castling_rooks_map = {"w+ve": ["WKR", "h1", "f1"], "w-ve": ["WQR", "a1", "d1"], "b+ve": ["BKR", "h8", "f8"], "b-ve": ["BQR", "a8", "d8"]}
+current_turn_color = "w"
+king_is_in_check = {"w": {}, "b": {}}
+
 def is_castling_move(move):
     x_diff = squares[move[1]][0] - squares[move[2]][0]
     if(len(move[0])!=2 or x_diff not in [2, -2]):
@@ -160,7 +163,8 @@ def make_move(validCheck, move):
     
     """This functions changes the board values in the dictionary and returns an illegal move message if the move is invalid"""
     global move_successful
-
+    global current_turn_color # If you're reassigning a global variable within a function (as we're doing for this variable at the end of this function), the local version of the variable shadows the global and you get an unbound exception. Gotta declare it as global to enforce the global value of the variable
+    opponent_color = utils_threatened_squares_specific.flip_colors(current_turn_color)
     if validCheck == True:
         castling_rook_and_squares = is_castling_move(move) 
         moved_pieces.append(move[0])
@@ -178,8 +182,16 @@ def make_move(validCheck, move):
         game_moves.append(move_record)
         if(move[0] in ["BK", "WK"]):
             king_square_dict[move[0][0].lower()] = move[1]
+        threatened_squares_and_attackers = utils_threatened_squares_specific.all_threatened_and_defended_squares(Board, opponent_color)
+        pieces_checking_opponent_king = utils_threatened_squares_specific.find_attackers(king_square_dict[opponent_color], threatened_squares_and_attackers)
+        if(len(pieces_checking_opponent_king) > 0):
+            king_is_in_check[opponent_color]["status"] = True
+            king_is_in_check[opponent_color]["attacking_squares"] = pieces_checking_opponent_king
+        else:
+            king_is_in_check[opponent_color]["status"] = False
+        current_turn_color = utils_threatened_squares_specific.flip_colors(current_turn_color)
         move_successful = True
-
+        
     else:
         move_successful = False
         return "Illegal Move"
@@ -190,7 +202,7 @@ def get_position_of_piece(move):
         if move[0] in values:
             return key
 
-def play(piece_to_move, new_position, whiteToPlay):
+def play(piece_to_move, new_position):
     
     pieces_moved = {} #Change to move history and track both black and white's move
     
@@ -199,10 +211,9 @@ def play(piece_to_move, new_position, whiteToPlay):
     move.append(new_position)
     current_pos = get_position_of_piece(move)
     move.append(current_pos)
-    current_color = 'w' if whiteToPlay else 'b'
-    king_square = king_square_dict[current_color]
+    king_square = king_square_dict[current_turn_color]
     move_validity = False
-    pinned_squares_map = utils_pinned_pieces.generate_pinned_squares(king_square, Board, current_color)
+    pinned_squares_map = utils_pinned_pieces.generate_pinned_squares(king_square, Board, current_turn_color)
     source_square_is_pinned = move[2] in list(pinned_squares_map.keys()) and move[1] not in pinned_squares_map[move[2]]
     name_of_piece_to_move = utils_threatened_squares_specific.extract_piece_name_and_color(piece_to_move)["name"]
     if(not source_square_is_pinned):
@@ -223,12 +234,12 @@ while(exit != 1):
     piece_to_move = input("Please enter the piece name you want to move. Use the board as guide: ")
     new_position = input("Please enter the position you want to move it to in normal chess notation: ")
     if(WhiteTurn == True and piece_to_move[0] == "W"):
-        print(play(piece_to_move, new_position, WhiteTurn))
+        print(play(piece_to_move, new_position))
         if(move_successful == True):
             WhiteTurn  = False
             BlackTurn = True
     elif(BlackTurn  == True and piece_to_move[0] == "B"):
-        print(play(piece_to_move, new_position, WhiteTurn))
+        print(play(piece_to_move, new_position))
         if(move_successful == True):
             WhiteTurn  = True
             BlackTurn = False
