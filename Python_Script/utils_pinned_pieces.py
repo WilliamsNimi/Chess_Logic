@@ -2,18 +2,22 @@ import utils_threatened_squares_specific
 import utils_valid_moves_specific
 
 def generate_pinned_squares(king_square, current_board, king_color):
+    """
+    - This function returns a dictionary of pinned squares and the squares to which they are constrained to move
+    """
     (king_x_coord, king_y_coord) = utils_threatened_squares_specific.squares[king_square]
     valid_king_move_directions = [[-1, +0], [+1, +0], [+0, -1], [+0, +1], [-1, -1], [+1, +1], [-1, +1], [+1, -1]]
     pinned_squares_map = {}
     for direction in valid_king_move_directions:
         king_defender_encountered = False
         pinned_square = ""
-        valid_move_squares = []
+        squares_along_the_line = []
         for n in range(1, 8):
             x_coord = utils_threatened_squares_specific.normalized_arithmetic(king_color, "sum", king_x_coord, n*direction[0])
             y_coord = utils_threatened_squares_specific.normalized_arithmetic(king_color, "sum", king_y_coord, n*direction[1])
             if utils_valid_moves_specific.isValidBoardCoordinates(x_coord, y_coord):
                 current_square = utils_valid_moves_specific.inverted_squares_map[str(x_coord)+','+str(y_coord)]
+                squares_along_the_line.append(current_square)
                 current_piece = current_board[current_square][2]
                 if len(current_piece) >= 1 and current_piece[0].lower() != king_color and not king_defender_encountered:
                     break
@@ -22,15 +26,14 @@ def generate_pinned_squares(king_square, current_board, king_color):
                 if len(current_piece) >= 1 and current_piece[0].lower() != king_color and king_defender_encountered: #encountering a different color piece after encountering a same color piece, check if it is a "pinner" then break
                     current_piece_name_color_dict = utils_threatened_squares_specific.extract_piece_name_and_color(current_piece)
                     if(current_piece_name_color_dict["name"] in ["r", "b", "q"]):
-                        valid_move_squares.append(current_square)
-                        pinned_squares_map[pinned_square] = valid_move_squares
+                        pinned_squares_map[pinned_square] = squares_along_the_line
                     break
                 if len(current_piece) == 0:
-                    valid_move_squares.append(current_square)
                     continue
                 if len(current_piece) >= 1 and current_piece[0].lower() == king_color and not king_defender_encountered: #encountering a same color piece for first time. Note it and continue
                     king_defender_encountered = True
                     pinned_square = current_square
+                    squares_along_the_line.pop(-1)
                     continue
 
     return pinned_squares_map
@@ -73,4 +76,4 @@ def generate_pinned_squares(king_square, current_board, king_color):
          
 #          }
 
-# print(generate_pinned_squares('c6', sampleChaosBoard)) #['c5']
+# print(generate_pinned_squares('c6', sampleChaosBoard, 'b')) #['c5']

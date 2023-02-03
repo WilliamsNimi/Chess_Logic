@@ -212,12 +212,13 @@ def play(piece_to_move, new_position):
     current_pos = get_position_of_piece(move)
     move.append(current_pos)
     king_square = king_square_dict[current_turn_color]
-    move_validity = False
     pinned_squares_map = utils_pinned_pieces.generate_pinned_squares(king_square, Board, current_turn_color)
-    source_square_is_pinned = move[2] in list(pinned_squares_map.keys()) and move[1] not in pinned_squares_map[move[2]]
     name_of_piece_to_move = utils_threatened_squares_specific.extract_piece_name_and_color(piece_to_move)["name"]
-    if(not source_square_is_pinned):
+    move_validity = False
+    if(name_of_piece_to_move == "k"):
         move_validity = utils_valid_moves_specific.validity_function_map[name_of_piece_to_move](move, Board, moved_pieces)
+    else:
+        move_validity = utils_valid_moves_specific.validity_function_map[name_of_piece_to_move](move, Board, pinned_squares_map)
     print(make_move(move_validity, move))
         
 exit  = 0  
