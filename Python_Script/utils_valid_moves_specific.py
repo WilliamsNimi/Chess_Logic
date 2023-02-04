@@ -9,9 +9,8 @@ inverted_squares_map = {'0,0': 'a1', '1,0': 'b1', '2,0': 'c1', '3,0': 'd1', '4,0
 
 from utils_threatened_squares_specific import *
 
-def pawn_move_valid_squares(move, current_board):
+def pawn_move_valid_squares(current_position, current_board):
     pawn_threats = []
-    current_position = move[2]
     x_coord = squares[current_position][0]
     y_coord = squares[current_position][1]
     color = current_board[current_position][2][0]
@@ -50,16 +49,17 @@ def pawn_move_valid_squares(move, current_board):
 
     return pawn_threats
 
-def pawn_move_validity(move, current_board, pinned_squares_map):
-    valid_pawn_moves = pawn_move_valid_squares(move, current_board)
-    current_square = move[2]
-    target_square = move[1]
+def pawn_valid_moves_without_pinned_squares(current_square, current_board, pinned_squares_map):
+    valid_pawn_moves = pawn_move_valid_squares(current_square, current_board)
     if(bool(pinned_squares_map) and current_square in list(pinned_squares_map.keys())):
-        return target_square in list(filter(lambda pinned_square: pinned_square in valid_pawn_moves, pinned_squares_map[current_square]))
+        return list(filter(lambda pinned_square: pinned_square in valid_pawn_moves, pinned_squares_map[current_square]))
     else:
-        return target_square in valid_pawn_moves
+        return valid_pawn_moves
 
-def knight_move_valid_squares(move, current_board):
+def pawn_move_validity(move, current_board, pinned_squares_map):
+    return move[1] in pawn_valid_moves_without_pinned_squares(move[2], current_board, pinned_squares_map)
+
+def knight_move_valid_squares(current_position, current_board):
     """
     The knight has 8 potentially valid destination squares it can attack.
     We'll check each of these to see if they're:
@@ -68,7 +68,6 @@ def knight_move_valid_squares(move, current_board):
     3. Determine based on 1 and 2 whether the square is threatened by the knight
     """
     knight_threats = []
-    current_position = move[2]
     x_coord = squares[current_position][0]
     y_coord = squares[current_position][1]
     color = current_board[current_position][2][0]
@@ -161,23 +160,23 @@ def knight_move_valid_squares(move, current_board):
     
     return knight_threats
 
-def knight_move_validity(move, current_board, pinned_squares_map):
-    valid_knight_moves = knight_move_valid_squares(move, current_board)
-    current_square = move[2]
-    target_square = move[1]
+def knight_valid_moves_without_pinned_squares(current_square, current_board, pinned_squares_map):
+    valid_knight_moves = knight_move_valid_squares(current_square, current_board)
     if(bool(pinned_squares_map) and current_square in list(pinned_squares_map.keys())):
-        return target_square in list(filter(lambda pinned_square: pinned_square in valid_knight_moves, pinned_squares_map[current_square]))
+        return list(filter(lambda pinned_square: pinned_square in valid_knight_moves, pinned_squares_map[current_square]))
     else:
-        return target_square in valid_knight_moves
+        return valid_knight_moves
 
-def rook_move_valid_squares(move, current_board):
+def knight_move_validity(move, current_board, pinned_squares_map):
+    return move[1] in knight_valid_moves_without_pinned_squares(move[2], current_board, pinned_squares_map)
+
+def rook_move_valid_squares(current_position, current_board):
     """
     A rook can potentially attack in 4 vertical directions (+x, -x, +y, -y).
     We'll check each of these directions for move_validity and occupation
     Returns a dictionary with key attacking color and value as a list of threatened squares
     """
     rook_threats = []
-    current_position = move[2]
     x_coord = squares[current_position][0]
     y_coord = squares[current_position][1]
     color = current_board[current_position][2][0]
@@ -251,23 +250,23 @@ def rook_move_valid_squares(move, current_board):
             break
     return rook_threats
 
-def rook_move_validity(move, current_board, pinned_squares_map):
-    valid_rook_moves = rook_move_valid_squares(move, current_board)
-    current_square = move[2]
-    target_square = move[1]
+def rook_valid_moves_without_pinned_squares(current_square, current_board, pinned_squares_map):
+    valid_rook_moves = rook_move_valid_squares(current_square, current_board)
     if(bool(pinned_squares_map) and current_square in list(pinned_squares_map.keys())):
-        return target_square in list(filter(lambda pinned_square: pinned_square in valid_rook_moves, pinned_squares_map[current_square]))
+        return list(filter(lambda pinned_square: pinned_square in valid_rook_moves, pinned_squares_map[current_square]))
     else:
-        return target_square in valid_rook_moves
+        return valid_rook_moves
 
-def bishop_move_valid_squares(move, current_board):
+def rook_move_validity(move, current_board, pinned_squares_map):
+    return move[1] in rook_valid_moves_without_pinned_squares(move[2], current_board, pinned_squares_map)
+
+def bishop_move_valid_squares(current_position, current_board):
     """
     A Bishop can potentially attack in 4 diagonal directions (z_up_right(1:15 on a clock), z_down_right(4:15 on a clock), 
     z_up_left(10:15 on a clock), z_down_left(7:15 on a clock)).
     We'll check each of these directions for move_validity and occupation
     """
     bishop_threats = []
-    current_position = move[2]
     x_coord = squares[current_position][0]
     y_coord = squares[current_position][1]
     color = current_board[current_position][2][0]
@@ -345,33 +344,35 @@ def bishop_move_valid_squares(move, current_board):
             break
     return bishop_threats
 
-def bishop_move_validity(move, current_board, pinned_squares_map):
-    valid_bishop_moves = bishop_move_valid_squares(move, current_board)
-    current_square = move[2]
-    target_square = move[1]
+def bishop_valid_moves_without_pinned_squares(current_square, current_board, pinned_squares_map):
+    valid_knight_moves = bishop_move_valid_squares(current_square, current_board)
     if(bool(pinned_squares_map) and current_square in list(pinned_squares_map.keys())):
-        return target_square in list(filter(lambda pinned_square: pinned_square in valid_bishop_moves, pinned_squares_map[current_square]))
+        return list(filter(lambda pinned_square: pinned_square in valid_knight_moves, pinned_squares_map[current_square]))
     else:
-        return target_square in valid_bishop_moves
+        return valid_knight_moves
 
-def queen_move_valid_squares(move, current_board):
+def bishop_move_validity(move, current_board, pinned_squares_map):
+    return move[1] in bishop_valid_moves_without_pinned_squares(move[2], current_board, pinned_squares_map)
+
+def queen_move_valid_squares(current_square, current_board):
 
     """
     A Queen combines the moves of both the Bishop and Rook.
     We'll simply call the existing functions and combine their results
     """
-    bishop_threats = bishop_move_valid_squares(move, current_board)
-    rook_threats = rook_move_valid_squares(move, current_board)
+    bishop_threats = bishop_move_valid_squares(current_square, current_board)
+    rook_threats = rook_move_valid_squares(current_square, current_board)
     return bishop_threats + rook_threats
 
-def queen_move_validity(move, current_board, pinned_squares_map):
-    valid_queen_moves = queen_move_valid_squares(move, current_board)
-    current_square = move[2]
-    target_square = move[1]
+def queen_valid_moves_without_pinned_squares(current_square, current_board, pinned_squares_map):
+    valid_queen_moves = queen_move_valid_squares(current_square, current_board)
     if(bool(pinned_squares_map) and current_square in list(pinned_squares_map.keys())):
-        return target_square in list(filter(lambda pinned_square: pinned_square in valid_queen_moves, pinned_squares_map[current_square]))
+        return list(filter(lambda pinned_square: pinned_square in valid_queen_moves, pinned_squares_map[current_square]))
     else:
-        return target_square in valid_queen_moves
+        return valid_queen_moves
+
+def queen_move_validity(move, current_board, pinned_squares_map):
+    return move[1] in queen_valid_moves_without_pinned_squares(move[2], current_board, pinned_squares_map)
 
 def is_empty_square(board, square):
     return board[square][2] == ""
@@ -387,20 +388,12 @@ def castling_check(color, direction, board, forbidden_squares):
             return ''
     return valid_castling_square_dict[color.lower()+direction]
 
-def king_move_valid_squares(move, current_board, moved_pieces):
-    """
-    The king has 8 potentially valid destination squares it can attack.
-    We'll check each of these to see if they're:
-    1. On the board
-    2. Are occupied by any pieces (and the color of the occupying piece)
-    3. Determine based on 1 and 2 whether the square is threatened by the knight
-    """
-    king_threats = []
+def king_valid_castling_squares(move, current_board, moved_pieces):
+    castling_squares = []
     current_position = move[2]
     target_position = move[1]
     piece_to_move=move[0]
     x_coord = squares[current_position][0]
-    y_coord = squares[current_position][1]
     x_coord_target = squares[target_position][0]
     color = current_board[current_position][2][0]
     x_diff = x_coord_target - x_coord
@@ -416,7 +409,21 @@ def king_move_valid_squares(move, current_board, moved_pieces):
         castle_square = castling_check(color, castling_direction, current_board, forbidden_squares)
         if(castle_square==''):
             return False
-        king_threats.append(castle_square)
+        castling_squares.append(castle_square)
+    return castling_squares
+
+def king_move_valid_squares(current_position, current_board, forbidden_squares):
+    """
+    The king has 8 potentially valid destination squares it can attack.
+    We'll check each of these to see if they're:
+    1. On the board
+    2. Are occupied by any pieces (and the color of the occupying piece)
+    3. Determine based on 1 and 2 whether the square is threatened by the knight
+    """
+    king_threats = []
+    x_coord = squares[current_position][0]
+    y_coord = squares[current_position][1]
+    color = current_board[current_position][2][0]
     top_90_degrees_y_coord = normalized_arithmetic(color, "sum", y_coord, 1)
     top_45_degrees_left_x_coord = normalized_arithmetic(color, "sum", x_coord, 1)
     top_45_degrees_left_y_coord = normalized_arithmetic(color, "sum", y_coord, 1)
@@ -511,7 +518,29 @@ def king_move_valid_squares(move, current_board, moved_pieces):
     return king_threats
 
 def king_move_validity(move, current_board, moved_pieces):
-    return move[1] in king_move_valid_squares(move, current_board, moved_pieces)
+    castling_squares = []
+    current_position = move[2]
+    target_position = move[1]
+    piece_to_move=move[0]
+    x_coord = squares[current_position][0]
+    x_coord_target = squares[target_position][0]
+    color = current_board[current_position][2][0]
+    x_diff = x_coord_target - x_coord
+    forbidden_squares = flatten_a_dictionary_of_arrays(all_threatened_and_defended_squares(current_board, color))
+    #check for castling
+    castling_rook_dict = {"w+ve": "WKR", "w-ve": "WQR", "b+ve": "BKR", "b-ve": "BQR"}
+    castling_direction = '+ve' if x_diff == 2 else '-ve'
+    rook_to_castle_with = castling_rook_dict[color.lower()+castling_direction]
+    KING_OR_ROOK_ALREADY_MOVED = (piece_to_move in moved_pieces) or (rook_to_castle_with in moved_pieces)
+    if(x_diff in [2, -2]):
+        if(KING_OR_ROOK_ALREADY_MOVED):
+            return False
+        castle_square = castling_check(color, castling_direction, current_board, forbidden_squares)
+        if(castle_square==''):
+            return False
+        castling_squares.append(castle_square)
+    all_valid_king_squares = castling_squares + king_move_valid_squares(move[2], current_board, forbidden_squares)
+    return target_position in all_valid_king_squares
 
 validity_function_map = {
     "p": pawn_move_validity,
@@ -521,6 +550,27 @@ validity_function_map = {
     "q": queen_move_validity,
     "k": king_move_validity
 }
+
+def all_valid_opponent_piece_moves(current_color, current_board, pinned_squares_map):
+    piece_mapping_k_excluded = {
+        "p": pawn_valid_moves_without_pinned_squares,
+        "r": rook_valid_moves_without_pinned_squares,
+        "n": knight_valid_moves_without_pinned_squares,
+        "b": bishop_valid_moves_without_pinned_squares,
+        "q": queen_valid_moves_without_pinned_squares
+    }
+    all_threats = {}
+
+    for(piece_position, value) in current_board.items():
+        if(len(value[2])>0):
+            piece_details = extract_piece_name_and_color(value[2])
+            if(piece_details["name"] == "k"):
+                continue
+            if(piece_details["color"]==current_color.lower()):
+                piece_threats = piece_mapping_k_excluded[piece_details["name"]](piece_position, current_board, pinned_squares_map)
+                all_threats[piece_position] = piece_threats
+    return all_threats
+
 ### Tests
 
 # sampleBoard = {"a1":[0,0,""],"b1":[1,0,"WQN"],"c1":[2,0,""],"d1":[3,0,""],"e1":[4,0,""], "f1":[5,0,"WKB"], "g1":[6,0,""], "h1":[7,0,"WKR"], 
@@ -540,6 +590,8 @@ validity_function_map = {
 # "a8":[0,7,"BQR"],"b8":[1,7,"BQN"],"c8":[2,7,""],"d8":[3,7,""],"e8":[4,7,""], "f8":[5,7,"BKB"], "g8":[6,7,""], "h8":[7,7,""]
          
 #          }
+
+# print(all_valid_opponent_piece_moves('w', sampleBoard))
 
 # print(pawn_move_validity('e7', sampleBoard)) #[]
 # print(pawn_move_validity('d7', sampleBoard)) #['e6', 'd6']
@@ -580,3 +632,7 @@ validity_function_map = {
 #print(king_move_validity(['WK', 'g1', 'e1'], castlingBoard, [])) #Test White king castling kingx side, all scenarios(1. blocking pieces 2. free to castle, 3. Inbetween square under attack 4. Rook already moved 5. King already moved)
 #print(king_move_validity(['WK', 'c1', 'e1'], castlingBoard, ['WK'])) #Test White Queen castling kingx side, all scenarios(1. blocking pieces 2. free to castle, 3. Inbetween square under attack 4. Rook already moved 5. King already moved)
 # 3 out of 4 is 75%, that's an A, leave me the fuck alone
+
+# sampleAllValidBoard = {'a1': [0, 0, 'WQR'], 'b1': [1, 0, 'WQN'], 'c1': [2, 0, 'WQB'], 'd1': [3, 0, 'WQ'], 'e1': [4, 0, 'WK'], 'f1': [5, 0, 'WKB'], 'g1': [6, 0, 'WKN'], 'h1': [7, 0, 'WKR'], 'a2': [0, 1, ''], 'b2': [1, 1, 'Wp2'], 'c2': [2, 1, 'Wp3'], 'd2': [3, 1, ''], 'e2': [4, 1, 'Wp5'], 'f2': [5, 1, 'Wp6'], 'g2': [6, 1, 'Wp7'], 'h2': [7, 1, 'Wp8'], 'a3': [0, 2, ''], 'b3': [1, 2, ''], 'c3': [2, 2, ''], 'd3': [3, 2, ''], 'e3': [4, 2, ''], 'f3': [5, 2, ''], 'g3': [6, 2, ''], 'h3': [7, 2, ''], 'a4': [0, 3, ''], 'b4': [1, 3, ''], 'c4': [2, 3, ''], 'd4': [3, 3, 'Bp4'], 'e4': [4, 3, ''], 'f4': [5, 3, ''], 'g4': [6, 3, ''], 'h4': [7, 3, ''], 'a5': [0, 4, 'Wp1'], 'b5': [1, 4, ''], 'c5': [2, 4, ''], 'd5': [3, 4, ''], 'e5': [4, 4, ''], 'f5': [5, 4, ''], 'g5': [6, 4, ''], 'h5': [7, 4, ''], 'a6': [0, 5, ''], 'b6': [1, 5, ''], 'c6': [2, 5, ''], 'd6': [3, 5, ''], 'e6': [4, 5, ''], 'f6': [5, 5, ''], 'g6': [6, 5, ''], 'h6': [7, 5, ''], 'a7': [0, 6, 'Bp8'], 'b7': [1, 6, 'Bp7'], 'c7': [2, 6, 'Bp6'], 'd7': [3, 6, 'Bp5'], 'e7': [4, 6, 'BQ'], 'f7': [5, 6, 'Bp3'], 'g7': [6, 6, 'Bp2'], 'h7': [7, 6, 'Bp1'], 'a8': [0, 7, 'BQR'], 'b8': [1, 7, 'BQN'], 'c8': [2, 7, 'BQB'], 'd8': [3, 7, ''], 'e8': [4, 7, 'BK'], 'f8': [5, 7, 'BKB'], 'g8': [6, 7, 'BKN'], 'h8': [7, 7, 'BKR']}
+# pinned_mapp = {'e2': ['e3', 'e4', 'e5', 'e6', 'e7']}
+# print(all_valid_opponent_piece_moves('b', sampleAllValidBoard, pinned_mapp))
