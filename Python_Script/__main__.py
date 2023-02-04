@@ -9,6 +9,7 @@ import pandas as pd
 import utils_valid_moves_specific
 import utils_pinned_pieces
 import utils_threatened_squares_specific
+import utils_king_check
 
 
 """Board Initialization
@@ -67,7 +68,8 @@ game_moves = []
 moved_pieces = []
 castling_rooks_map = {"w+ve": ["WKR", "h1", "f1"], "w-ve": ["WQR", "a1", "d1"], "b+ve": ["BKR", "h8", "f8"], "b-ve": ["BQR", "a8", "d8"]}
 current_turn_color = "w"
-king_is_in_check = {"w": {}, "b": {}}
+colors_name_map = {"w": "white", "b": "black"}
+king_is_in_check = {"w": {"status": False, "valid_moves_map": {}}, "b": {"status": False, "valid_moves_map": {}}}
 
 def is_castling_move(move):
     x_diff = squares[move[1]][0] - squares[move[2]][0]
@@ -185,13 +187,21 @@ def make_move(validCheck, move):
         threatened_squares_and_attackers = utils_threatened_squares_specific.all_threatened_and_defended_squares(Board, opponent_color)
         pieces_checking_opponent_king = utils_threatened_squares_specific.find_attackers(king_square_dict[opponent_color], threatened_squares_and_attackers)
         if(len(pieces_checking_opponent_king) > 0):
+            pinned_squares_map = utils_pinned_pieces.generate_pinned_squares(king_square_dict[opponent_color], Board, opponent_color)
             king_is_in_check[opponent_color]["status"] = True
-            king_is_in_check[opponent_color]["attacking_squares"] = pieces_checking_opponent_king
+            valid_moves_in_check = utils_king_check.valid_moves_when_in_check(king_square_dict[opponent_color], opponent_color, Board, pinned_squares_map, pieces_checking_opponent_king)
+            if(not bool(valid_moves_in_check)):
+                print("Checkmate!"+ " " + colors_name_map[current_turn_color].capitalize() + " wins!")
+                global exit
+                exit = 1
+            else:
+                print(colors_name_map[opponent_color].capitalize() + " King is in check!!")
+                king_is_in_check[opponent_color]["valid_moves_map"] = valid_moves_in_check
         else:
             king_is_in_check[opponent_color]["status"] = False
         current_turn_color = utils_threatened_squares_specific.flip_colors(current_turn_color)
         move_successful = True
-        
+
     else:
         move_successful = False
         return "Illegal Move"
@@ -215,7 +225,10 @@ def play(piece_to_move, new_position):
     pinned_squares_map = utils_pinned_pieces.generate_pinned_squares(king_square, Board, current_turn_color)
     name_of_piece_to_move = utils_threatened_squares_specific.extract_piece_name_and_color(piece_to_move)["name"]
     move_validity = False
-    if(name_of_piece_to_move == "k"):
+    if(king_is_in_check[current_turn_color]["status"] == True):
+        valid_moves_in_check = king_is_in_check[current_turn_color]["valid_moves_map"]
+        move_validity = move[2] in list(valid_moves_in_check.keys()) and move[1] in valid_moves_in_check[move[2]]
+    elif(name_of_piece_to_move == "k"):
         move_validity = utils_valid_moves_specific.validity_function_map[name_of_piece_to_move](move, Board, moved_pieces)
     else:
         move_validity = utils_valid_moves_specific.validity_function_map[name_of_piece_to_move](move, Board, pinned_squares_map)
