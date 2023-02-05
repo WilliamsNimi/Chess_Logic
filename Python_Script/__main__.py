@@ -191,6 +191,7 @@ def make_move(validCheck, move):
             king_is_in_check[opponent_color]["status"] = True
             valid_moves_in_check = utils_king_check.valid_moves_when_in_check(king_square_dict[opponent_color], opponent_color, Board, pinned_squares_map, pieces_checking_opponent_king)
             if(not bool(valid_moves_in_check)):
+                render_board(Board)
                 print("Checkmate!"+ " " + colors_name_map[current_turn_color].capitalize() + " wins!")
                 global exit
                 exit = 1
