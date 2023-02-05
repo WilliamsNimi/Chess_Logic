@@ -6,8 +6,9 @@ Created on Sun Apr 17 06:21:01 2022
 """
 import numpy as np
 import pandas as pd
-import utils2
 import utils_valid_moves_specific
+import utils_pinned_pieces
+import utils_threatened_squares_specific
 
 
 """Board Initialization
@@ -60,9 +61,13 @@ inverted_squares_map = {'0,0': 'a1', '1,0': 'b1', '2,0': 'c1', '3,0': 'd1', '4,0
 
 board_letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
 
+king_square_dict = {"w": "e1", "b": "e8"} #Explicitly specifying the kings' squares so we don't have to do a board look up on every move. Will update this state dictionary any time the king makes a move to a different square.
+
 game_moves = []
 moved_pieces = []
 castling_rooks_map = {"w+ve": ["WKR", "h1", "f1"], "w-ve": ["WQR", "a1", "d1"], "b+ve": ["BKR", "h8", "f8"], "b-ve": ["BQR", "a8", "d8"]}
+current_turn_color = "w"
+
 def is_castling_move(move):
     x_diff = squares[move[1]][0] - squares[move[2]][0]
     if(len(move[0])!=2 or x_diff not in [2, -2]):
@@ -157,7 +162,7 @@ def make_move(validCheck, move):
     
     """This functions changes the board values in the dictionary and returns an illegal move message if the move is invalid"""
     global move_successful
-    
+    global current_turn_color # If you're reassigning a global variable within a function (as we're doing for this variable at the end of this function), the local version of the variable shadows the global and you get an unbound exception. Gotta declare it as global to enforce the global value of the variable
     if validCheck == True:
         castling_rook_and_squares = is_castling_move(move) 
         moved_pieces.append(move[0])
@@ -173,8 +178,11 @@ def make_move(validCheck, move):
             move_record["castling_rook"] = castling_rook_and_squares[0]
         move_record["board_after"] = Board
         game_moves.append(move_record)
+        if(move[0] in ["BK", "WK"]):
+            king_square_dict[move[0][0].lower()] = move[1]
+        current_turn_color = utils_threatened_squares_specific.flip_colors(current_turn_color)
         move_successful = True
-
+        
     else:
         move_successful = False
         return "Illegal Move"
@@ -194,27 +202,15 @@ def play(piece_to_move, new_position):
     move.append(new_position)
     current_pos = get_position_of_piece(move)
     move.append(current_pos)
-    
-    if(piece_to_move[0:2] == "Wp" or piece_to_move[0:2] == "Bp"):
-        print(make_move(utils_valid_moves_specific.pawn_move_validity(move, Board), move))
-        pieces_moved[piece_to_move] = piece_to_move
-    elif(piece_to_move == "WQR" or piece_to_move == "WKR" or piece_to_move == "BQR" or piece_to_move == "BKR"):
-        print(make_move(utils_valid_moves_specific.rook_move_validity(move, Board), move))
-        pieces_moved[piece_to_move] = piece_to_move
-    elif(piece_to_move == "WQN" or piece_to_move == "WKN" or piece_to_move == "BQN" or piece_to_move == "BKN" ):
-        print(make_move(utils_valid_moves_specific.knight_move_validity(move, Board), move))
-        pieces_moved[piece_to_move] = piece_to_move
-    elif(piece_to_move == "WQB" or piece_to_move == "WKB" or piece_to_move == "BQB" or piece_to_move == "BKB"):
-        print(make_move(utils_valid_moves_specific.bishop_move_validity(move, Board), move))
-        pieces_moved[piece_to_move] = piece_to_move
-    elif(piece_to_move == "WQ" or piece_to_move == "BQ"):
-        print(make_move(utils_valid_moves_specific.queen_move_validity(move, Board), move))
-        pieces_moved[piece_to_move] = piece_to_move
-    elif(piece_to_move == "WK" or piece_to_move == "BK"):
-        print(make_move(utils_valid_moves_specific.king_move_validity(move, Board, moved_pieces), move))
-        pieces_moved[piece_to_move] = piece_to_move
+    king_square = king_square_dict[current_turn_color]
+    pinned_squares_map = utils_pinned_pieces.generate_pinned_squares(king_square, Board, current_turn_color)
+    name_of_piece_to_move = utils_threatened_squares_specific.extract_piece_name_and_color(piece_to_move)["name"]
+    move_validity = False
+    if(name_of_piece_to_move == "k"):
+        move_validity = utils_valid_moves_specific.validity_function_map[name_of_piece_to_move](move, Board, moved_pieces)
     else:
-        print("Please check your moves")
+        move_validity = utils_valid_moves_specific.validity_function_map[name_of_piece_to_move](move, Board, pinned_squares_map)
+    print(make_move(move_validity, move))
         
 exit  = 0  
 BlackTurn = False
