@@ -358,16 +358,8 @@ def king_threatened_squares(current_position, current_board):
     
     return king_threats
 
-def is_pawn(piece):
-  return any(char.isdigit() for char in piece)
-
 def extract_piece_name_and_color(piece):
-  if(is_pawn(piece)):
-    return {"name": "p", "color": piece[0].lower()}
-  elif(len(piece)==2):
-    return {"name": piece[1].lower(), "color": piece[0].lower()}
-  else:
-    return {"name": piece[2].lower(), "color": piece[0].lower()}
+  return {"name": piece[1].lower(), "color": piece[0].lower()}
 
 def deduplicate(list_with_duplications):
     return list(set(list_with_duplications))
