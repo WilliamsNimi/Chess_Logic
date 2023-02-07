@@ -12,6 +12,7 @@ import utils_threatened_squares_specific
 import utils_king_check
 import util_constants
 import utils_piece_promotion
+import utils_castling
 
 
 """Board Initialization
@@ -72,16 +73,6 @@ inverted_squares_map = util_constants.inverted_squares_map
 castling_rooks_map = util_constants.castling_rooks_map
 colors_name_map = util_constants.colors_name_map
 board_letters = util_constants.board_letters
-
-def is_castling_move(move):
-    x_diff = squares[move[1]][0] - squares[move[2]][0]
-    if(len(move[0])!=2 or x_diff not in [2, -2]):
-        return []
-    if(move[0][1].lower()!='k'):
-        return []
-    castling_direction = '+ve' if x_diff == 2 else '-ve'
-    return castling_rooks_map[move[0][0].lower() + castling_direction]
-    
 
 def render_board(Board):
     
@@ -170,7 +161,7 @@ def make_move(validCheck, move):
     global current_turn_color # If you're reassigning a global variable within a function (as we're doing for this variable at the end of this function), the local version of the variable shadows the global and you get an unbound exception. Gotta declare it as global to enforce the global value of the variable
     opponent_color = utils_threatened_squares_specific.flip_colors(current_turn_color)
     if validCheck == True:
-        castling_rook_and_squares = is_castling_move(move) 
+        castling_rook_and_squares = utils_castling.is_castling_move(move) 
         moved_pieces.append(move[0])
         # Creating a snapshot of the game on every move by recording the move, origin, destination, and before and after boards
         # We probably don't need this yet but it'll come handy if we need to display move history and stuff like that
