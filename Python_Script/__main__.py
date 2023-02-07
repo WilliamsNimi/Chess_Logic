@@ -11,6 +11,7 @@ import utils_pinned_pieces
 import utils_threatened_squares_specific
 import utils_king_check
 import util_constants
+import utils_piece_promotion
 
 
 """Board Initialization
@@ -71,6 +72,7 @@ castling_rooks_map = {"w+ve": ["WR1", "h1", "f1"], "w-ve": ["WR2", "a1", "d1"], 
 current_turn_color = "w"
 colors_name_map = {"w": "white", "b": "black"}
 king_is_in_check = {"w": {"status": False, "valid_moves_map": {}}, "b": {"status": False, "valid_moves_map": {}}}
+promotion_numbering_map = {"wq": 1, "bq": 1, "wr": 2, "br": 2, "wb": 2, "bb": 2, "wn": 2, "bn": 2}
 
 def is_castling_move(move):
     x_diff = squares[move[1]][0] - squares[move[2]][0]
@@ -201,6 +203,16 @@ def make_move(validCheck, move):
                 king_is_in_check[opponent_color]["valid_moves_map"] = valid_moves_in_check
         else:
             king_is_in_check[opponent_color]["status"] = False
+        if(utils_piece_promotion.is_promotion_move(move[0], move[1])):
+            desired_official = input("Please enter the first alphabet of the official you would like your pawn promoted to: ")
+            if(str(desired_official).lower() not in util_constants.valid_promotion_officials):
+                move_successful = False
+                return "Invalid official. Please enter one of the Alphabets: Q, R, B, N"
+            promotion_numbering_map_key = current_turn_color.lower() + desired_official.lower()
+            current_desired_official_number = promotion_numbering_map[promotion_numbering_map_key]
+            promoted_official = utils_piece_promotion.get_promoted_official(desired_official, current_desired_official_number, current_turn_color)
+            Board[move[1]][2] = promoted_official
+            promotion_numbering_map[promotion_numbering_map_key] += 1
         current_turn_color = utils_threatened_squares_specific.flip_colors(current_turn_color)
         move_successful = True
 
