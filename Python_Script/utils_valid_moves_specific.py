@@ -6,6 +6,7 @@ TO-DO:
 
 from utils_threatened_squares_specific import *
 import util_constants
+import utils_castling
 squares = util_constants.squares
 inverted_squares_map = util_constants.inverted_squares_map
 
@@ -374,44 +375,6 @@ def queen_valid_moves_without_pinned_squares(current_square, current_board, pinn
 def queen_move_validity(move, current_board, pinned_squares_map):
     return move[1] in queen_valid_moves_without_pinned_squares(move[2], current_board, pinned_squares_map)
 
-def is_empty_square(board, square):
-    return board[square][2] == ""
-
-def castling_check(color, direction, board, forbidden_squares):
-    squares_to_check_dict = {"w+ve": ["f1", "g1"], "w-ve": ["c1", "d1", "b1"], "b+ve": ["f8", "g8"], "b-ve": ["c8", "d8", "b8"]}
-    valid_castling_square_dict = {"w+ve": "g1", "w-ve": "c1", "b+ve": "g8", "b-ve": "c8"}
-
-    for index, square_to_check in enumerate(squares_to_check_dict[color.lower()+direction]):
-        if(index < 2 and square_to_check in forbidden_squares):
-            return ''
-        if(not is_empty_square(board, square_to_check)):
-            return ''
-    return valid_castling_square_dict[color.lower()+direction]
-
-def king_valid_castling_squares(move, current_board, moved_pieces):
-    castling_squares = []
-    current_position = move[2]
-    target_position = move[1]
-    piece_to_move=move[0]
-    x_coord = squares[current_position][0]
-    x_coord_target = squares[target_position][0]
-    color = current_board[current_position][2][0]
-    x_diff = x_coord_target - x_coord
-    forbidden_squares = flatten_a_dictionary_of_arrays(all_threatened_and_defended_squares(current_board, color))
-    #check for castling
-    castling_rook_dict = {"w+ve": "WKR", "w-ve": "WQR", "b+ve": "BKR", "b-ve": "BQR"}
-    castling_direction = '+ve' if x_diff == 2 else '-ve'
-    rook_to_castle_with = castling_rook_dict[color.lower()+castling_direction]
-    KING_OR_ROOK_ALREADY_MOVED = (piece_to_move in moved_pieces) or (rook_to_castle_with in moved_pieces)
-    if(x_diff in [2, -2]):
-        if(KING_OR_ROOK_ALREADY_MOVED):
-            return False
-        castle_square = castling_check(color, castling_direction, current_board, forbidden_squares)
-        if(castle_square==''):
-            return False
-        castling_squares.append(castle_square)
-    return castling_squares
-
 def king_move_valid_squares(current_position, current_board, forbidden_squares):
     """
     The king has 8 potentially valid destination squares it can attack.
@@ -528,14 +491,14 @@ def king_move_validity(move, current_board, moved_pieces):
     x_diff = x_coord_target - x_coord
     forbidden_squares = flatten_a_dictionary_of_arrays(all_threatened_and_defended_squares(current_board, color))
     #check for castling
-    castling_rook_dict = {"w+ve": "WKR", "w-ve": "WQR", "b+ve": "BKR", "b-ve": "BQR"}
+    castling_rook_dict = util_constants.castling_rook_dict
     castling_direction = '+ve' if x_diff == 2 else '-ve'
     rook_to_castle_with = castling_rook_dict[color.lower()+castling_direction]
     KING_OR_ROOK_ALREADY_MOVED = (piece_to_move in moved_pieces) or (rook_to_castle_with in moved_pieces)
     if(x_diff in [2, -2]):
         if(KING_OR_ROOK_ALREADY_MOVED):
             return False
-        castle_square = castling_check(color, castling_direction, current_board, forbidden_squares)
+        castle_square = utils_castling.castling_check(color, castling_direction, current_board, forbidden_squares)
         if(castle_square==''):
             return False
         castling_squares.append(castle_square)
