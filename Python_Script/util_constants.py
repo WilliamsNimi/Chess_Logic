@@ -4,3 +4,6 @@ valid_promotion_officials = ['q', 'r', 'b', 'n']
 castling_rooks_map = {"w+ve": ["WR1", "h1", "f1"], "w-ve": ["WR2", "a1", "d1"], "b+ve": ["BR1", "h8", "f8"], "b-ve": ["BR2", "a8", "d8"]}
 colors_name_map = {"w": "white", "b": "black"}
 board_letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
+castling_rook_dict = {"w+ve": "WR1", "w-ve": "WR2", "b+ve": "BR1", "b-ve": "BR2"}
+squares_to_check_dict = {"w+ve": ["f1", "g1"], "w-ve": ["c1", "d1", "b1"], "b+ve": ["f8", "g8"], "b-ve": ["c8", "d8", "b8"]}
+valid_castling_square_dict = {"w+ve": "g1", "w-ve": "c1", "b+ve": "g8", "b-ve": "c8"}
