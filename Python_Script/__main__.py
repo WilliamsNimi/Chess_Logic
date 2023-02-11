@@ -3,6 +3,7 @@
 Created on Sun Apr 17 06:21:01 2022
 
 @author: Nimi Williams
+@C0-author: Ayooluwa Adedipe
 """
 import numpy as np
 import pandas as pd
