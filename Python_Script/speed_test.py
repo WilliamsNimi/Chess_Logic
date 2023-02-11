@@ -1,6 +1,6 @@
 from datetime import datetime
 from utils_threatened_squares_specific import *
-from utils2 import *
+# from utils2 import *
 
 sampleBoard = {"a1":[0,0,""],"b1":[1,0,"WQN"],"c1":[2,0,""],"d1":[3,0,""],"e1":[4,0,""], "f1":[5,0,"WKB"], "g1":[6,0,""], "h1":[7,0,"WKR"], 
          
@@ -69,7 +69,7 @@ def timer(function_to_test, args):
 # sampleKingPiece = sampleBoard[sampleKingPosition][2]
 
 #Test all threatened squares functions
-print(timer(get_all_threatened_squares, [sampleBoard, squares]))
+# print(timer(get_all_threatened_squares, [sampleBoard, squares]))
 print(timer(all_threatened_and_defended_squares, [sampleBoard, 'w']))
 
 # print(timer(threatened_squares_king, [sampleKingPiece, sampleBoard, squares]))
