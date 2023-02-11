@@ -1,4 +1,5 @@
 
+from utils_castling import board_letters
 def move_validity_knight(knight_move, Board):
     """
     1. Checks the validity of a knight's move. Typically, the distance((x1 -x2)/(y1-y2)) between the current position (x1, y1) of a knight and the proposed posiiton (x2, y2) should be -0.5, or 0.5, or -2. or 2
