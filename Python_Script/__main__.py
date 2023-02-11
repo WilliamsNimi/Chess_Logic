@@ -3,6 +3,7 @@
 Created on Sun Apr 17 06:21:01 2022
 
 @author: Nimi Williams
+@C0-author: Ayooluwa Adedipe
 """
 import numpy as np
 import pandas as pd
@@ -12,6 +13,7 @@ import utils_threatened_squares_specific
 import utils_king_check
 import util_constants
 import utils_piece_promotion
+import utils_castling
 
 
 """Board Initialization
@@ -40,7 +42,7 @@ Bp = Black's pawn
 Normal chess notation for squares is used as key in the dictionary. The Values attached to each key is mapped to a cartesian coordinate, with square a1 starting at (0,0)
 
 """
-
+### Initializing game state values
 Board = {"a1":[0,0,"WR2"],"b1":[1,0,"WN2"],"c1":[2,0,"WB2"],"d1":[3,0,"WQ1"],"e1":[4,0,"WK"], "f1":[5,0,"WB1"], "g1":[6,0,"WN1"], "h1":[7,0,"WR1"], 
          
 "a2":[0,1,"Wp1"],"b2":[1,1,"Wp2"],"c2":[2,1,"Wp3"],"d2":[3,1,"Wp4"],"e2":[4,1,"Wp5"], "f2":[5,1,"Wp6"], "g2":[6,1,"Wp7"], "h2":[7,1,"Wp8"],
@@ -59,30 +61,19 @@ Board = {"a1":[0,0,"WR2"],"b1":[1,0,"WN2"],"c1":[2,0,"WB2"],"d1":[3,0,"WQ1"],"e1
          
          }
 
-squares = util_constants.squares
-inverted_squares_map = util_constants.inverted_squares_map
-
-board_letters = ["a", "b", "c", "d", "e", "f", "g", "h"]
-
 king_square_dict = {"w": "e1", "b": "e8"} #Explicitly specifying the kings' squares so we don't have to do a board look up on every move. Will update this state dictionary any time the king makes a move to a different square.
-
 game_moves = []
 moved_pieces = []
-castling_rooks_map = {"w+ve": ["WR1", "h1", "f1"], "w-ve": ["WR2", "a1", "d1"], "b+ve": ["BR1", "h8", "f8"], "b-ve": ["BR2", "a8", "d8"]}
 current_turn_color = "w"
-colors_name_map = {"w": "white", "b": "black"}
 king_is_in_check = {"w": {"status": False, "valid_moves_map": {}}, "b": {"status": False, "valid_moves_map": {}}}
 promotion_numbering_map = {"wq": 1, "bq": 1, "wr": 2, "br": 2, "wb": 2, "bb": 2, "wn": 2, "bn": 2}
 
-def is_castling_move(move):
-    x_diff = squares[move[1]][0] - squares[move[2]][0]
-    if(len(move[0])!=2 or x_diff not in [2, -2]):
-        return []
-    if(move[0][1].lower()!='k'):
-        return []
-    castling_direction = '+ve' if x_diff == 2 else '-ve'
-    return castling_rooks_map[move[0][0].lower() + castling_direction]
-    
+### Importing constant values
+squares = util_constants.squares
+inverted_squares_map = util_constants.inverted_squares_map
+castling_rooks_map = util_constants.castling_rooks_map
+colors_name_map = util_constants.colors_name_map
+board_letters = util_constants.board_letters
 
 def render_board(Board):
     
@@ -171,7 +162,7 @@ def make_move(validCheck, move):
     global current_turn_color # If you're reassigning a global variable within a function (as we're doing for this variable at the end of this function), the local version of the variable shadows the global and you get an unbound exception. Gotta declare it as global to enforce the global value of the variable
     opponent_color = utils_threatened_squares_specific.flip_colors(current_turn_color)
     if validCheck == True:
-        castling_rook_and_squares = is_castling_move(move) 
+        castling_rook_and_squares = utils_castling.is_castling_move(move) 
         moved_pieces.append(move[0])
         # Creating a snapshot of the game on every move by recording the move, origin, destination, and before and after boards
         # We probably don't need this yet but it'll come handy if we need to display move history and stuff like that
