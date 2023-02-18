@@ -7,10 +7,11 @@ TO-DO:
 from utils_threatened_squares_specific import *
 import util_constants
 import utils_castling
+import utils_enpassant
 squares = util_constants.squares
 inverted_squares_map = util_constants.inverted_squares_map
 
-def pawn_move_valid_squares(current_position, current_board):
+def pawn_move_valid_squares(current_position, current_board, last_game_move):
     pawn_threats = []
     x_coord = squares[current_position][0]
     y_coord = squares[current_position][1]
@@ -42,23 +43,27 @@ def pawn_move_valid_squares(current_position, current_board):
     left_target_piece = current_board[left_target_position][2] if top_left_square_is_valid else 'invalid_piece'
 
     #Check if the top right square is valid, empty or of a different color
-    if(top_right_square_is_valid and len(right_target_piece)>=1 and right_target_piece[0]!=color):
+    regular_top_right_validity = top_right_square_is_valid and len(right_target_piece)>=1 and right_target_piece[0]!=color
+    enpassant_top_right_validity = top_right_square_is_valid and utils_enpassant.is_valid_enpassant_move(current_position, right_target_position, current_board, color, last_game_move)
+    if(regular_top_right_validity or enpassant_top_right_validity):
         pawn_threats.append(right_target_position)
     #Check if the top left square is valid, empty or of a different color
-    if(top_left_square_is_valid and len(left_target_piece)>=1 and left_target_piece[0]!=color):
+    regular_top_left_validity = top_left_square_is_valid and len(left_target_piece)>=1 and left_target_piece[0]!=color
+    enpassant_top_left_validity = top_left_square_is_valid and utils_enpassant.is_valid_enpassant_move(current_position, left_target_position, current_board, color, last_game_move)
+    if(regular_top_left_validity or enpassant_top_left_validity):
         pawn_threats.append(left_target_position)
 
     return pawn_threats
 
-def pawn_valid_moves_without_pinned_squares(current_square, current_board, pinned_squares_map):
-    valid_pawn_moves = pawn_move_valid_squares(current_square, current_board)
+def pawn_valid_moves_without_pinned_squares(current_square, current_board, pinned_squares_map, last_game_move):
+    valid_pawn_moves = pawn_move_valid_squares(current_square, current_board, last_game_move)
     if(bool(pinned_squares_map) and current_square in list(pinned_squares_map.keys())):
         return list(filter(lambda pinned_square: pinned_square in valid_pawn_moves, pinned_squares_map[current_square]))
     else:
         return valid_pawn_moves
 
-def pawn_move_validity(move, current_board, pinned_squares_map):
-    return move[1] in pawn_valid_moves_without_pinned_squares(move[2], current_board, pinned_squares_map)
+def pawn_move_validity(move, current_board, pinned_squares_map, last_game_move):
+    return move[1] in pawn_valid_moves_without_pinned_squares(move[2], current_board, pinned_squares_map, last_game_move)
 
 def knight_move_valid_squares(current_position, current_board):
     """

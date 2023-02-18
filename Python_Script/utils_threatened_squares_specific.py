@@ -398,7 +398,7 @@ def flatten_a_dictionary_of_arrays(dict):
 
 
 def flip_colors(current_color):
-    return "b" if current_color == "w" else "w"
+    return "b" if current_color.lower() == "w" else "w"
 
 def find_attackers(square_to_check, threatened_squares_and_attackers):
     ###

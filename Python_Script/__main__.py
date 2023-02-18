@@ -14,6 +14,7 @@ import utils_king_check
 import util_constants
 import utils_piece_promotion
 import utils_castling
+import utils_enpassant
 
 
 """Board Initialization
@@ -62,7 +63,8 @@ Board = {"a1":[0,0,"WR2"],"b1":[1,0,"WN2"],"c1":[2,0,"WB2"],"d1":[3,0,"WQ1"],"e1
          }
 
 king_square_dict = {"w": "e1", "b": "e8"} #Explicitly specifying the kings' squares so we don't have to do a board look up on every move. Will update this state dictionary any time the king makes a move to a different square.
-game_moves = []
+game_moves_history = [{"piece": None, "current_square": None,"destination_square": None, "board_before": None}]
+captured_pieces = []
 moved_pieces = []
 current_turn_color = "w"
 king_is_in_check = {"w": {"status": False, "valid_moves_map": {}}, "b": {"status": False, "valid_moves_map": {}}}
@@ -166,7 +168,14 @@ def make_move(validCheck, move):
         moved_pieces.append(move[0])
         # Creating a snapshot of the game on every move by recording the move, origin, destination, and before and after boards
         # We probably don't need this yet but it'll come handy if we need to display move history and stuff like that
-        move_record = {"piece": move[0], "current_square": move[2],"target_square": move[1], "board_before": Board}
+        move_record = {"piece": move[0], "current_square": move[2],"destination_square": move[1], "board_before": Board}
+        if(Board[move[1]][2] != ""):
+            captured_pieces.append(Board[move[1]][2])
+        if(utils_enpassant.is_valid_enpassant_move(move[2], move[1], Board, current_turn_color, game_moves_history[-1])):
+            victim_square = game_moves_history[-1]["destination_square"]
+            victim_piece = Board[victim_square][2]
+            Board[victim_square][2] = ""
+            captured_pieces.append(victim_piece)
         Board[move[1]][2] = move[0]
         Board[move[2]][2] = ""
         if(castling_rook_and_squares):
@@ -175,7 +184,7 @@ def make_move(validCheck, move):
             Board[castling_rook_and_squares[1]][2] = ""
             move_record["castling_rook"] = castling_rook_and_squares[0]
         move_record["board_after"] = Board
-        game_moves.append(move_record)
+        game_moves_history.append(move_record)
         if(move[0] in ["BK", "WK"]):
             king_square_dict[move[0][0].lower()] = move[1]
         threatened_squares_and_attackers = utils_threatened_squares_specific.all_threatened_and_defended_squares(Board, opponent_color)
@@ -233,6 +242,8 @@ def play(piece_to_move, new_position):
     if(king_is_in_check[current_turn_color]["status"] == True):
         valid_moves_in_check = king_is_in_check[current_turn_color]["valid_moves_map"]
         move_validity = move[2] in list(valid_moves_in_check.keys()) and move[1] in valid_moves_in_check[move[2]]
+    elif(name_of_piece_to_move == "p"):
+        move_validity = utils_valid_moves_specific.validity_function_map[name_of_piece_to_move](move, Board, pinned_squares_map, game_moves_history[-1])
     elif(name_of_piece_to_move == "k"):
         move_validity = utils_valid_moves_specific.validity_function_map[name_of_piece_to_move](move, Board, moved_pieces)
     else:
