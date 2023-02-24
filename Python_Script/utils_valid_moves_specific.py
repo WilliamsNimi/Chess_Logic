@@ -55,7 +55,7 @@ def pawn_move_valid_squares(current_position, current_board, last_game_move):
 
     return pawn_threats
 
-def pawn_valid_moves_without_pinned_squares(current_square, current_board, pinned_squares_map, last_game_move):
+def pawn_valid_moves_without_pinned_squares(current_square, current_board, pinned_squares_map, last_game_move=False):
     valid_pawn_moves = pawn_move_valid_squares(current_square, current_board, last_game_move)
     if(bool(pinned_squares_map) and current_square in list(pinned_squares_map.keys())):
         return list(filter(lambda pinned_square: pinned_square in valid_pawn_moves, pinned_squares_map[current_square]))
