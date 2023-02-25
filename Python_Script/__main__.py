@@ -157,6 +157,16 @@ def get_squares_threatened_by_white(all_threatened_squares):
 
     return white_threats
 
+moves_history = {} #Update to print moves in chess notation. especially during capture
+piece_name = []
+move_made = []
+def print_game_history(moves_history):
+    print("\nGame Move History")
+    historyDF = pd.DataFrame.from_dict(moves_history)
+    print(historyDF)
+    print("\n")
+
+
 def make_move(validCheck, move):
     
     """This functions changes the board values in the dictionary and returns an illegal move message if the move is invalid"""
@@ -165,7 +175,10 @@ def make_move(validCheck, move):
     opponent_color = utils_threatened_squares_specific.flip_colors(current_turn_color)
     if validCheck == True:
         castling_rook_and_squares = utils_castling.is_castling_move(move) 
-        moved_pieces.append(move[0])
+        piece_name.append(move[0])
+        move_made.append(move[1])
+        moves_history["Piece Name"] = piece_name
+        moves_history["Last Move"] = move_made
         # Creating a snapshot of the game on every move by recording the move, origin, destination, and before and after boards
         # We probably don't need this yet but it'll come handy if we need to display move history and stuff like that
         move_record = {"piece": move[0], "current_square": move[2],"destination_square": move[1], "board_before": Board}
@@ -215,10 +228,12 @@ def make_move(validCheck, move):
             promotion_numbering_map[promotion_numbering_map_key] += 1
         current_turn_color = utils_threatened_squares_specific.flip_colors(current_turn_color)
         move_successful = True
-
+        print_game_history(moves_history)
+        
     else:
         move_successful = False
         print("Illegal Move")
+        print_game_history(moves_history)
 
 def get_position_of_piece(move):
     """ This function gets the position of the piece the user has indicated to move. If the piece does not exist on the board, it returns an empty string"""
@@ -227,9 +242,6 @@ def get_position_of_piece(move):
             return key
 
 def play(piece_to_move, new_position):
-    
-    pieces_moved = {} #Change to move history and track both black and white's move
-    
     move = []
     move.append(piece_to_move)
     move.append(new_position)
@@ -258,9 +270,9 @@ WhiteTurn = True
 while(exit != 1): 
     render_board(Board)
     if(WhiteTurn == True):
-        print("\nWhite's Turn!")
+        print("\nWhite's Turn!\n")
     else:
-        print("\nBlack's Turn")
+        print("\nBlack's Turn\n")
     piece_to_move = input("Please enter the piece name you want to move. Use the board as guide: ")
     new_position = input("Please enter the position you want to move it to in normal chess notation: ")
     if(WhiteTurn == True and piece_to_move[0] == "W"):
