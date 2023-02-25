@@ -266,7 +266,14 @@ exit  = 0
 BlackTurn = False
 WhiteTurn = True  
 
+def welcome_message():
+    print("Welcome to Primitive Chess\n")
+    print("This is still work in progress, so stalemate is not possible here\n")
+    print("SIMPLE RULES\n")
+    print(" wr2 reps white's queen's side rook\n wn1 reps white's king's side knight\n wb2 reps white's queen side bishop\n anything with a p is a pawn\n")
+    print("You should have gotten the idea now and adopted for black...\n Try Not to Have Fun!!!\n")
 
+welcome_message()
 while(exit != 1): 
     render_board(Board)
     if(WhiteTurn == True):
