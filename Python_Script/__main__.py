@@ -44,9 +44,9 @@ Normal chess notation for squares is used as key in the dictionary. The Values a
 
 """
 ### Initializing game state values
-Board = {"a1":[0,0,"WR2"],"b1":[1,0,"WN2"],"c1":[2,0,"WB2"],"d1":[3,0,"WQ1"],"e1":[4,0,"WK"], "f1":[5,0,"WB1"], "g1":[6,0,"WN1"], "h1":[7,0,"WR1"], 
+Board = {"a1":[0,0,"wr2"],"b1":[1,0,"wn2"],"c1":[2,0,"wb2"],"d1":[3,0,"wq1"],"e1":[4,0,"wk"], "f1":[5,0,"wb1"], "g1":[6,0,"wn1"], "h1":[7,0,"wr1"], 
          
-"a2":[0,1,"Wp1"],"b2":[1,1,"Wp2"],"c2":[2,1,"Wp3"],"d2":[3,1,"Wp4"],"e2":[4,1,"Wp5"], "f2":[5,1,"Wp6"], "g2":[6,1,"Wp7"], "h2":[7,1,"Wp8"],
+"a2":[0,1,"wp1"],"b2":[1,1,"wp2"],"c2":[2,1,"wp3"],"d2":[3,1,"wp4"],"e2":[4,1,"wp5"], "f2":[5,1,"wp6"], "g2":[6,1,"wp7"], "h2":[7,1,"wp8"],
          
 "a3":[0,2,""],"b3":[1,2,""],"c3":[2,2,""],"d3":[3,2,""],"e3":[4,2,""], "f3":[5,2,""], "g3":[6,2,""], "h3":[7,2,""],
 
@@ -56,9 +56,9 @@ Board = {"a1":[0,0,"WR2"],"b1":[1,0,"WN2"],"c1":[2,0,"WB2"],"d1":[3,0,"WQ1"],"e1
 
 "a6":[0,5,""],"b6":[1,5,""],"c6":[2,5,""],"d6":[3,5,""],"e6":[4,5,""], "f6":[5,5,""], "g6":[6,5,""], "h6":[7,5,""],
 
-"a7":[0,6,"Bp8"],"b7":[1,6,"Bp7"],"c7":[2,6,"Bp6"],"d7":[3,6,"Bp5"],"e7":[4,6,"Bp4"], "f7":[5,6,"Bp3"], "g7":[6,6,"Bp2"], "h7":[7,6,"Bp1"], 
+"a7":[0,6,"bp8"],"b7":[1,6,"bp7"],"c7":[2,6,"bp6"],"d7":[3,6,"bp5"],"e7":[4,6,"bp4"], "f7":[5,6,"bp3"], "g7":[6,6,"bp2"], "h7":[7,6,"bp1"], 
 
-"a8":[0,7,"BR2"],"b8":[1,7,"BN2"],"c8":[2,7,"BB2"],"d8":[3,7,"BQ1"],"e8":[4,7,"BK"], "f8":[5,7,"BB1"], "g8":[6,7,"BN1"], "h8":[7,7,"BR1"]
+"a8":[0,7,"br2"],"b8":[1,7,"bn2"],"c8":[2,7,"bb2"],"d8":[3,7,"bq1"],"e8":[4,7,"bk"], "f8":[5,7,"bb1"], "g8":[6,7,"bn1"], "h8":[7,7,"br1"]
          
          }
 
@@ -274,13 +274,15 @@ while(exit != 1):
     else:
         print("\nBlack's Turn\n")
     piece_to_move = input("Please enter the piece name you want to move. Use the board as guide: ")
+    piece_to_move = piece_to_move.lower()
     new_position = input("Please enter the position you want to move it to in normal chess notation: ")
-    if(WhiteTurn == True and piece_to_move[0] == "W"):
+    new_position = new_position.lower()
+    if(WhiteTurn == True and piece_to_move[0] == "w"):
         play(piece_to_move, new_position)
         if(move_successful == True):
             WhiteTurn  = False
             BlackTurn = True
-    elif(BlackTurn  == True and piece_to_move[0] == "B"):
+    elif(BlackTurn  == True and piece_to_move[0] == "b"):
         play(piece_to_move, new_position)
         if(move_successful == True):
             WhiteTurn  = True
