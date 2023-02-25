@@ -207,7 +207,7 @@ def make_move(validCheck, move):
             desired_official = input("Please enter the first alphabet of the official you would like your pawn promoted to: ")
             if(str(desired_official).lower() not in util_constants.valid_promotion_officials):
                 move_successful = False
-                return "Invalid official. Please enter one of the Alphabets: Q, R, B, N"
+                print("Invalid official. Please enter one of the Alphabets: Q, R, B, N")
             promotion_numbering_map_key = current_turn_color.lower() + desired_official.lower()
             current_desired_official_number = promotion_numbering_map[promotion_numbering_map_key]
             promoted_official = utils_piece_promotion.get_promoted_official(desired_official, current_desired_official_number, current_turn_color)
@@ -218,7 +218,7 @@ def make_move(validCheck, move):
 
     else:
         move_successful = False
-        return "Illegal Move"
+        print("Illegal Move")
 
 def get_position_of_piece(move):
     """ This function gets the position of the piece the user has indicated to move. If the piece does not exist on the board, it returns an empty string"""
@@ -248,7 +248,7 @@ def play(piece_to_move, new_position):
         move_validity = utils_valid_moves_specific.validity_function_map[name_of_piece_to_move](move, Board, moved_pieces)
     else:
         move_validity = utils_valid_moves_specific.validity_function_map[name_of_piece_to_move](move, Board, pinned_squares_map)
-    print(make_move(move_validity, move))
+    make_move(move_validity, move)
         
 exit  = 0  
 BlackTurn = False
@@ -264,19 +264,16 @@ while(exit != 1):
     piece_to_move = input("Please enter the piece name you want to move. Use the board as guide: ")
     new_position = input("Please enter the position you want to move it to in normal chess notation: ")
     if(WhiteTurn == True and piece_to_move[0] == "W"):
-        print(play(piece_to_move, new_position))
+        play(piece_to_move, new_position)
         if(move_successful == True):
             WhiteTurn  = False
             BlackTurn = True
     elif(BlackTurn  == True and piece_to_move[0] == "B"):
-        print(play(piece_to_move, new_position))
+        play(piece_to_move, new_position)
         if(move_successful == True):
             WhiteTurn  = True
             BlackTurn = False
     else:
         print("\nPlease check your piece input! Use the board as guide.")
         #exit = input("Please press 1 if you will like to exit: ")
-    
-
-
     
