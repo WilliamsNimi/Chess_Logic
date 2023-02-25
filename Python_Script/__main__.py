@@ -44,9 +44,9 @@ Normal chess notation for squares is used as key in the dictionary. The Values a
 
 """
 ### Initializing game state values
-Board = {"a1":[0,0,"WR2"],"b1":[1,0,"WN2"],"c1":[2,0,"WB2"],"d1":[3,0,"WQ1"],"e1":[4,0,"WK"], "f1":[5,0,"WB1"], "g1":[6,0,"WN1"], "h1":[7,0,"WR1"], 
+Board = {"a1":[0,0,"wr2"],"b1":[1,0,"wn2"],"c1":[2,0,"wb2"],"d1":[3,0,"wq1"],"e1":[4,0,"wk"], "f1":[5,0,"wb1"], "g1":[6,0,"wn1"], "h1":[7,0,"wr1"], 
          
-"a2":[0,1,"Wp1"],"b2":[1,1,"Wp2"],"c2":[2,1,"Wp3"],"d2":[3,1,"Wp4"],"e2":[4,1,"Wp5"], "f2":[5,1,"Wp6"], "g2":[6,1,"Wp7"], "h2":[7,1,"Wp8"],
+"a2":[0,1,"wp1"],"b2":[1,1,"wp2"],"c2":[2,1,"wp3"],"d2":[3,1,"wp4"],"e2":[4,1,"wp5"], "f2":[5,1,"wp6"], "g2":[6,1,"wp7"], "h2":[7,1,"wp8"],
          
 "a3":[0,2,""],"b3":[1,2,""],"c3":[2,2,""],"d3":[3,2,""],"e3":[4,2,""], "f3":[5,2,""], "g3":[6,2,""], "h3":[7,2,""],
 
@@ -56,9 +56,9 @@ Board = {"a1":[0,0,"WR2"],"b1":[1,0,"WN2"],"c1":[2,0,"WB2"],"d1":[3,0,"WQ1"],"e1
 
 "a6":[0,5,""],"b6":[1,5,""],"c6":[2,5,""],"d6":[3,5,""],"e6":[4,5,""], "f6":[5,5,""], "g6":[6,5,""], "h6":[7,5,""],
 
-"a7":[0,6,"Bp8"],"b7":[1,6,"Bp7"],"c7":[2,6,"Bp6"],"d7":[3,6,"Bp5"],"e7":[4,6,"Bp4"], "f7":[5,6,"Bp3"], "g7":[6,6,"Bp2"], "h7":[7,6,"Bp1"], 
+"a7":[0,6,"bp8"],"b7":[1,6,"bp7"],"c7":[2,6,"bp6"],"d7":[3,6,"bp5"],"e7":[4,6,"bp4"], "f7":[5,6,"bp3"], "g7":[6,6,"bp2"], "h7":[7,6,"bp1"], 
 
-"a8":[0,7,"BR2"],"b8":[1,7,"BN2"],"c8":[2,7,"BB2"],"d8":[3,7,"BQ1"],"e8":[4,7,"BK"], "f8":[5,7,"BB1"], "g8":[6,7,"BN1"], "h8":[7,7,"BR1"]
+"a8":[0,7,"br2"],"b8":[1,7,"bn2"],"c8":[2,7,"bb2"],"d8":[3,7,"bq1"],"e8":[4,7,"bk"], "f8":[5,7,"bb1"], "g8":[6,7,"bn1"], "h8":[7,7,"br1"]
          
          }
 
@@ -157,6 +157,16 @@ def get_squares_threatened_by_white(all_threatened_squares):
 
     return white_threats
 
+moves_history = {} #Update to print moves in chess notation. especially during capture
+piece_name = []
+move_made = []
+def print_game_history(moves_history):
+    print("\nGame Move History")
+    historyDF = pd.DataFrame.from_dict(moves_history)
+    print(historyDF)
+    print("\n")
+
+
 def make_move(validCheck, move):
     
     """This functions changes the board values in the dictionary and returns an illegal move message if the move is invalid"""
@@ -165,7 +175,10 @@ def make_move(validCheck, move):
     opponent_color = utils_threatened_squares_specific.flip_colors(current_turn_color)
     if validCheck == True:
         castling_rook_and_squares = utils_castling.is_castling_move(move) 
-        moved_pieces.append(move[0])
+        piece_name.append(move[0])
+        move_made.append(move[1])
+        moves_history["Piece Name"] = piece_name
+        moves_history["Last Move"] = move_made
         # Creating a snapshot of the game on every move by recording the move, origin, destination, and before and after boards
         # We probably don't need this yet but it'll come handy if we need to display move history and stuff like that
         move_record = {"piece": move[0], "current_square": move[2],"destination_square": move[1], "board_before": Board}
@@ -207,7 +220,7 @@ def make_move(validCheck, move):
             desired_official = input("Please enter the first alphabet of the official you would like your pawn promoted to: ")
             if(str(desired_official).lower() not in util_constants.valid_promotion_officials):
                 move_successful = False
-                return "Invalid official. Please enter one of the Alphabets: Q, R, B, N"
+                print("Invalid official. Please enter one of the Alphabets: Q, R, B, N")
             promotion_numbering_map_key = current_turn_color.lower() + desired_official.lower()
             current_desired_official_number = promotion_numbering_map[promotion_numbering_map_key]
             promoted_official = utils_piece_promotion.get_promoted_official(desired_official, current_desired_official_number, current_turn_color)
@@ -215,10 +228,12 @@ def make_move(validCheck, move):
             promotion_numbering_map[promotion_numbering_map_key] += 1
         current_turn_color = utils_threatened_squares_specific.flip_colors(current_turn_color)
         move_successful = True
-
+        print_game_history(moves_history)
+        
     else:
         move_successful = False
-        return "Illegal Move"
+        print("Illegal Move")
+        print_game_history(moves_history)
 
 def get_position_of_piece(move):
     """ This function gets the position of the piece the user has indicated to move. If the piece does not exist on the board, it returns an empty string"""
@@ -227,9 +242,6 @@ def get_position_of_piece(move):
             return key
 
 def play(piece_to_move, new_position):
-    
-    pieces_moved = {} #Change to move history and track both black and white's move
-    
     move = []
     move.append(piece_to_move)
     move.append(new_position)
@@ -248,35 +260,41 @@ def play(piece_to_move, new_position):
         move_validity = utils_valid_moves_specific.validity_function_map[name_of_piece_to_move](move, Board, moved_pieces)
     else:
         move_validity = utils_valid_moves_specific.validity_function_map[name_of_piece_to_move](move, Board, pinned_squares_map)
-    print(make_move(move_validity, move))
+    make_move(move_validity, move)
         
 exit  = 0  
 BlackTurn = False
 WhiteTurn = True  
 
+def welcome_message():
+    print("Welcome to Primitive Chess\n")
+    print("This is still work in progress, so stalemate is not possible here\n")
+    print("SIMPLE RULES\n")
+    print(" wr2 reps white's queen's side rook\n wn1 reps white's king's side knight\n wb2 reps white's queen side bishop\n anything with a p is a pawn\n")
+    print("You should have gotten the idea now and adopted for black...\n Try Not to Have Fun!!!\n")
 
+welcome_message()
 while(exit != 1): 
     render_board(Board)
     if(WhiteTurn == True):
-        print("\nWhite's Turn!")
+        print("\nWhite's Turn!\n")
     else:
-        print("\nBlack's Turn")
+        print("\nBlack's Turn\n")
     piece_to_move = input("Please enter the piece name you want to move. Use the board as guide: ")
+    piece_to_move = piece_to_move.lower()
     new_position = input("Please enter the position you want to move it to in normal chess notation: ")
-    if(WhiteTurn == True and piece_to_move[0] == "W"):
-        print(play(piece_to_move, new_position))
+    new_position = new_position.lower()
+    if(WhiteTurn == True and piece_to_move[0] == "w"):
+        play(piece_to_move, new_position)
         if(move_successful == True):
             WhiteTurn  = False
             BlackTurn = True
-    elif(BlackTurn  == True and piece_to_move[0] == "B"):
-        print(play(piece_to_move, new_position))
+    elif(BlackTurn  == True and piece_to_move[0] == "b"):
+        play(piece_to_move, new_position)
         if(move_successful == True):
             WhiteTurn  = True
             BlackTurn = False
     else:
         print("\nPlease check your piece input! Use the board as guide.")
         #exit = input("Please press 1 if you will like to exit: ")
-    
-
-
     
