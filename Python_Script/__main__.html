@@ -1,3 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>PyScript App</title>
+    <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css"/>
+    <script defer src="https://pyscript.net/alpha/pyscript.js"></script>
+</head>
+<body>
+    <py-config type="json">
+        {
+          "packages": [
+            "numpy",
+            "pandas"
+          ],
+          "fetch": [
+            {
+              "files": [
+                "utils_valid_moves_specific.py",
+                "utils_pinned_pieces.py",
+                "utils_threatened_squares_specific.py"
+                "utils_king_check.py",
+                "util_constants.py",
+                "utils_piece_promotion.py",
+                "utils_castling.py",
+                "utils_enpassant.py"
+              ]
+            }
+          ]
+        }
+      </py-config>
+<py-script>
 # -*- coding: utf-8 -*-
 """
 Created on Sun Apr 17 06:21:01 2022
@@ -15,7 +46,6 @@ import util_constants
 import utils_piece_promotion
 import utils_castling
 import utils_enpassant
-import random
 
 
 """Board Initialization
@@ -97,25 +127,25 @@ def render_board(Board):
     for key, values in Board.items():
         board_list.append(values[2])
     for elements in board_list:
-        if(count < 8):
+        if(count< 8):
             row1.append(elements)
             count+=1
-        elif(count>=8 and count <16):
+        elif(count>=8 and count< 16):
             row2.append(elements)
             count+=1
-        elif(count>=16 and count <24):
+        elif(count>=16 and count< 24):
             row3.append(elements)
             count+=1
-        elif(count>=24 and count<32):
+        elif(count>=24 and count< 32):
             row4.append(elements)
             count+=1
-        elif(count>=32 and count < 40):
+        elif(count>=32 and count< 40):
             row5.append(elements)
             count+=1
         elif(count>=40 and count< 48):
             row6.append(elements)
             count+=1
-        elif(count>=48 and count < 56):
+        elif(count>=48 and count< 56):
             row7.append(elements)
             count+=1
         else:
@@ -203,7 +233,7 @@ def make_move(validCheck, move):
             king_square_dict[move[0][0].lower()] = move[1]
         threatened_squares_and_attackers = utils_threatened_squares_specific.all_threatened_and_defended_squares(Board, opponent_color)
         pieces_checking_opponent_king = utils_threatened_squares_specific.find_attackers(king_square_dict[opponent_color], threatened_squares_and_attackers)
-        if(len(pieces_checking_opponent_king) > 0):
+        if(len(pieces_checking_opponent_king)>0):
             pinned_squares_map = utils_pinned_pieces.generate_pinned_squares(king_square_dict[opponent_color], Board, opponent_color)
             king_is_in_check[opponent_color]["status"] = True
             valid_moves_in_check = utils_king_check.valid_moves_when_in_check(king_square_dict[opponent_color], opponent_color, Board, pinned_squares_map, pieces_checking_opponent_king)
@@ -251,7 +281,6 @@ def play(piece_to_move, new_position):
     king_square = king_square_dict[current_turn_color]
     pinned_squares_map = utils_pinned_pieces.generate_pinned_squares(king_square, Board, current_turn_color)
     name_of_piece_to_move = utils_threatened_squares_specific.extract_piece_name_and_color(piece_to_move)["name"]
-    print(name_of_piece_to_move)
     move_validity = False
     if(king_is_in_check[current_turn_color]["status"] == True):
         valid_moves_in_check = king_is_in_check[current_turn_color]["valid_moves_map"]
@@ -276,119 +305,23 @@ def welcome_message():
     print("You should have gotten the idea now and adopted for black...\n Try Not to Have Fun!!!\n")
 
 welcome_message()
-
-move_counter = 1
-first_second_comp_moves_squares = ["a5","a6","b5","b6","c5","c6","d5","d6","e5","e6","f5","f6","g5","g6","h5","h6",]
-first_second_comp_moves_pieces = ["bn1","bn2","bp1","bp2","bp3","bp4","bp5","bp6","bp7","bp8"]
-
-def board_squares():
-    board_squares = []
-    for squares in util_constants.squares:
-        board_squares.append(squares)
-    return board_squares
-board_squares_ = board_squares()
-def computer_play():
-    """ Simulating computer play
-        Algorithm:
-        1. Randomly select the first and second pieces to move from the first_second_comp_moves_squares list
-        2. Randomly select where the piece should move to from the first_second_comp_moves_pieces list
-        3. After the first 2 moves, collate the remaining pieces on the board and randomly check moves until a valid move is found.
-    """
-    global move_counter
-    pieces_on_board = []
-    comp_piece_to_move = ""
-    comp_square_to_move = ""
-    if(move_counter < 3):
-        comp_piece_to_move = first_second_comp_moves_pieces[random.randint(0, len(first_second_comp_moves_pieces) -1)]
-        print(comp_piece_to_move)
-        comp_square_to_move = first_second_comp_moves_squares[random.randint(0, len(first_second_comp_moves_squares) - 1)]
-        print(comp_square_to_move)
-        play(comp_piece_to_move, comp_square_to_move)
-        move_counter += 1
-        #play(comp_piece_to_move, comp_square_to_move)
-    else:
-        for squares, pieces in Board.items():
-            if(pieces[2] != ""):
-                if(pieces[2][0] == "b"):
-                    pieces_on_board.append(pieces[2])
-        comp_square_to_move = board_squares_[random.randint(0, len(board_squares_) - 1)]
-        comp_piece_to_move = pieces_on_board[random.randint(0, len(pieces_on_board) - 1)]
-        play(comp_piece_to_move, comp_square_to_move)
-
-play_choice = 0
-while(play_choice != 1 or play_choice != 2):
-    play_choice = int(input("Play self? press 1:\nor press 2 play a retarded computer:"))
-    if (play_choice == 1):
-        while(exit != 1): 
-            render_board(Board)
-            if(WhiteTurn == True):
-                print("\nWhite's Turn!\n")
-            else:
-                print("\nBlack's Turn\n")
-            piece_to_move = input("Please enter the piece name you want to move. Use the board as guide: ")
-            piece_to_move = piece_to_move.lower()
-            new_position = input("Please enter the position you want to move it to in normal chess notation: ")
-            new_position = new_position.lower()
-            if(WhiteTurn == True and piece_to_move[0] == "w"):
-                play(piece_to_move, new_position)
-                if(move_successful == True):
-                    WhiteTurn  = False
-                    BlackTurn = True
-            elif(BlackTurn  == True and piece_to_move[0] == "b"):
-                play(piece_to_move, new_position)
-                if(move_successful == True):
-                    WhiteTurn  = True
-                    BlackTurn = False
-            else:
-                print("\nPlease check your piece input! Use the board as guide.")
-                #exit = input("Please press 1 if you will like to exit: ")
-    elif(play_choice == 2):
-        while(exit != 1): 
-            render_board(Board)
-            if(WhiteTurn == True):
-                print("\nWhite's Turn!\n")
-            else:
-                print("\nBlack's Turn\n")
-            if(WhiteTurn == True):
-                piece_to_move = input("Please enter the piece name you want to move. Use the board as guide: ")
-                piece_to_move = piece_to_move.lower()
-                new_position = input("Please enter the position you want to move it to in normal chess notation: ")
-                new_position = new_position.lower()
-                play(piece_to_move, new_position)
-                if(move_successful == True):
-                    WhiteTurn  = False
-                    BlackTurn = True
-            elif(BlackTurn  == True):
-                computer_play()
-                if(move_successful == True):
-                    WhiteTurn  = True
-                    BlackTurn = False
-            else:
-                print("\nPlease check your piece input! Use the board as guide.")
-                #exit = input("Please press 1 if you will like to exit: ")
-    else:
-        play_choice = input("Please enter a valid response. 1 to play self, 2 to play a retarded computer:")
-
-
 while(exit != 1): 
     render_board(Board)
     if(WhiteTurn == True):
         print("\nWhite's Turn!\n")
     else:
         print("\nBlack's Turn\n")
-    
-    if(WhiteTurn == True ):
-        piece_to_move = input("Please enter the piece name you want to move. Use the board as guide: ")
-        piece_to_move = piece_to_move.lower()
-        new_position = input("Please enter the position you want to move it to in normal chess notation: ")
-        new_position = new_position.lower()
+    piece_to_move = input("Please enter the piece name you want to move. Use the board as guide: ")
+    piece_to_move = piece_to_move.lower()
+    new_position = input("Please enter the position you want to move it to in normal chess notation: ")
+    new_position = new_position.lower()
+    if(WhiteTurn == True and piece_to_move[0] == "w"):
         play(piece_to_move, new_position)
         if(move_successful == True):
             WhiteTurn  = False
             BlackTurn = True
-    elif(BlackTurn  == True ):
-        #play(piece_to_move, new_position)
-        computer_play()
+    elif(BlackTurn  == True and piece_to_move[0] == "b"):
+        play(piece_to_move, new_position)
         if(move_successful == True):
             WhiteTurn  = True
             BlackTurn = False
@@ -396,3 +329,6 @@ while(exit != 1):
         print("\nPlease check your piece input! Use the board as guide.")
         #exit = input("Please press 1 if you will like to exit: ")
     
+</py-script>
+</body>
+</html>
